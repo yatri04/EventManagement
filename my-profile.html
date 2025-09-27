@@ -3,962 +3,879 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillSwap - My Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .orbitron {
-            font-family: 'Orbitron', monospace;
-        }
-
-        /* Holographic Profile Container */
-        .holographic-profile {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
-            box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 50px rgba(0, 212, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .holographic-profile::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(
-                from 0deg,
-                transparent,
-                rgba(0, 212, 255, 0.1),
-                transparent,
-                rgba(255, 107, 107, 0.1),
-                transparent,
-                rgba(138, 43, 226, 0.1),
-                transparent
-            );
-            animation: holographic-rotate 10s linear infinite;
-            z-index: -1;
-        }
-
-        @keyframes holographic-rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Profile Header */
-        .profile-header {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 107, 0.1));
-            border-radius: 25px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            font-weight: bold;
-            color: white;
-            margin: 0 auto 20px;
-            position: relative;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
-        }
-
-        .profile-avatar::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #8a2be2, #00d4ff);
-            border-radius: 50%;
-            z-index: -1;
-            animation: border-rotate 3s linear infinite;
-        }
-
-        @keyframes border-rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Neon Text */
-        .neon-text {
-            text-shadow: 
-                0 0 10px rgba(0, 212, 255, 0.8),
-                0 0 20px rgba(0, 212, 255, 0.6),
-                0 0 30px rgba(0, 212, 255, 0.4);
-        }
-
-        .neon-text-pink {
-            text-shadow: 
-                0 0 10px rgba(255, 107, 107, 0.8),
-                0 0 20px rgba(255, 107, 107, 0.6),
-                0 0 30px rgba(255, 107, 107, 0.4);
-        }
-
-        /* Skill Tags */
-        .skill-tag {
-            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin: 5px;
-            display: inline-block;
-            animation: skill-pulse 2s ease-in-out infinite;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .skill-tag::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .skill-tag:hover::before {
-            left: 100%;
-        }
-
-        @keyframes skill-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Cyber Button */
-        .cyber-button {
-            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
-            border: none;
-            color: white;
-            padding: 15px 30px;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-radius: 25px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .cyber-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .cyber-button:hover::before {
-            left: 100%;
-        }
-
-        .cyber-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Status Badges */
-        .status-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .status-available {
-            background: linear-gradient(45deg, #10b981, #34d399);
-            color: white;
-        }
-
-        .status-busy {
-            background: linear-gradient(45deg, #f59e0b, #fbbf24);
-            color: white;
-        }
-
-        .status-limited {
-            background: linear-gradient(45deg, #f97316, #fb923c);
-            color: white;
-        }
-
-        .status-offline {
-            background: linear-gradient(45deg, #ef4444, #f87171);
-            color: white;
-        }
-
-        /* Glass Effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .glass-dark {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Navbar */
-        .navbar {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        /* Edit Mode Styles */
-        .edit-mode {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-        }
-
-        .edit-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            width: 100%;
-            margin: 5px 0;
-        }
-
-        .edit-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .edit-textarea {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            width: 100%;
-            min-height: 100px;
-            resize: vertical;
-            font-family: inherit;
-        }
-
-        .edit-textarea::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Checkbox Styles */
-        .skill-checkbox {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-            padding: 8px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-
-        .skill-checkbox:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .skill-checkbox input[type="checkbox"] {
-            margin-right: 10px;
-            transform: scale(1.2);
-        }
-
-        .skill-checkbox label {
-            color: white;
-            cursor: pointer;
-        }
-    </style>
+    <title>My Profile - Event Registration - UPDATED</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="profile-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar py-4 px-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-8">
-                <div class="orbitron text-2xl font-bold neon-text">
-                    <span class="text-cyan-400">Skill</span><span class="text-pink-400">Swap</span>
-                </div>
-                
-                <div class="hidden md:flex space-x-6">
-                    <a href="index.html" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">Home</a>
-                    <a href="#" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">Explore</a>
-                    <a href="#" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">About</a>
-                </div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Event Registration</span>
             </div>
-            
-            <div class="flex items-center space-x-4" id="navAuth">
-                <!-- This will be populated by JavaScript -->
-            </div>
-            
-            <div class="flex items-center space-x-4" id="navGuest" style="display: none;">
-                <a href="login.html" class="cyber-button text-sm">Login</a>
-                <a href="register.html" class="glass px-6 py-2 rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 font-medium">Register</a>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="events.html" class="nav-link">Events</a>
+                <a href="my-profile.html" class="nav-link active">My Profile</a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </a>
+                <div class="nav-profile">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Profile">
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="pt-24 pb-12 px-4">
-        <div class="max-w-6xl mx-auto">
-            <!-- Profile Header -->
-            <div class="holographic-profile p-8 mb-8">
-                <div class="text-center">
-                    <div class="profile-avatar" id="profileAvatar">
-                        <!-- Avatar will be populated by JavaScript -->
-                    </div>
-                    <h1 class="orbitron text-3xl font-bold text-white mb-2" id="profileName">
-                        <!-- Name will be populated by JavaScript -->
-                    </h1>
-                    <p class="text-cyan-400 text-lg mb-4" id="profileTitle">
-                        <!-- Title will be populated by JavaScript -->
-                    </p>
-                    <div class="status-badge inline-block" id="profileStatus">
-                        <!-- Status will be populated by JavaScript -->
+    <!-- Profile Header -->
+    <section class="profile-header">
+        <div class="container">
+            <div class="profile-cover">
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face" alt="Profile" id="profileImage">
+                        <div class="avatar-edit">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" id="avatarInput" accept="image/*" hidden>
+                        </div>
                     </div>
                 </div>
+                <div class="profile-info">
+                    <h1 class="profile-name" id="profileName">Loading...</h1>
+                    <p class="profile-title" id="profileTitle">Student</p>
+                    <p class="profile-location" id="profileLocation"><i class="fas fa-map-marker-alt"></i> University Campus</p>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <span class="stat-number" id="totalEvents">0</span>
+                            <span class="stat-label">Events Attended</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="upcomingEvents">0</span>
+                            <span class="stat-label">Upcoming Events</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="waitingList">0</span>
+                            <span class="stat-label">Waiting List</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="memberSince">2024</span>
+                            <span class="stat-label">Member Since</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="edit-profile-btn" id="editProfileBtn">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </button>
             </div>
+        </div>
+    </section>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Profile Content -->
+    <section class="profile-content">
+        <div class="container">
+            <div class="profile-grid">
                 <!-- Left Column -->
-                <div class="space-y-8">
-                    <!-- Profile Photo Upload -->
-                    <div class="holographic-profile photo-upload-section p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl font-bold text-white">Profile Photo</h3>
-                            <button onclick="document.getElementById('photoUpload').click()" class="cyber-button text-sm">
-                                Upload Photo
+                <div class="profile-left">
+                    <!-- About Section -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>About Me</h3>
+                            <button class="edit-btn" id="editAboutBtn">
+                                <i class="fas fa-edit"></i>
                             </button>
                         </div>
-                        <input type="file" id="photoUpload" accept="image/*" class="hidden">
-                        <div class="flex items-center space-x-4">
-                            <div id="profilePhoto" class="w-20 h-20 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center text-white font-bold text-2xl">
-                                <!-- Photo will be displayed here -->
-                            </div>
-                            <div class="text-white/60 text-sm">
-                                <p>Upload a profile photo to personalize your account</p>
-                                <p class="text-xs mt-1">Supports JPG, PNG, GIF up to 5MB</p>
+                        <div class="card-content">
+                            <p id="aboutText">Tell us about yourself and your interests in events...</p>
+                        </div>
+                    </div>
+
+                    <!-- My Registered Events -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>My Registered Events</h3>
+                            <button class="refresh-btn" id="refreshEventsBtn">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div class="events-list" id="registeredEventsList">
+                                <div class="loading-state">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Loading events...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Skills Offered -->
-                    <div class="holographic-profile p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="orbitron text-xl font-bold text-white">Skills I Offer</h3>
-                            <button onclick="toggleEdit('skillsOffered')" class="cyber-button text-sm">Edit</button>
+                    <!-- Event History -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>Event History</h3>
+                            <span class="view-all" id="viewAllHistory">View All</span>
                         </div>
-                        
-                        <div id="skillsOfferedDisplay">
-                            <!-- Skills will be populated by JavaScript -->
-                        </div>
-                        
-                        <div id="skillsOfferedEdit" class="edit-mode" style="display: none;">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="react" value="React">
-                                    <label for="react">React</label>
+                        <div class="card-content">
+                            <div class="history-list" id="eventHistoryList">
+                                <div class="loading-state">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Loading history...</span>
                                 </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="nodejs" value="Node.js">
-                                    <label for="nodejs">Node.js</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="python" value="Python">
-                                    <label for="python">Python</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="javascript" value="JavaScript">
-                                    <label for="javascript">JavaScript</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="html" value="HTML/CSS">
-                                    <label for="html">HTML/CSS</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="sql" value="SQL">
-                                    <label for="sql">SQL</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="aws" value="AWS">
-                                    <label for="aws">AWS</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="docker" value="Docker">
-                                    <label for="docker">Docker</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="git" value="Git">
-                                    <label for="git">Git</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="figma" value="Figma">
-                                    <label for="figma">Figma</label>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2 mt-4">
-                                <button onclick="saveSkills('skillsOffered')" class="cyber-button text-sm">Save</button>
-                                <button onclick="cancelEdit('skillsOffered')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Skills Wanted -->
-                    <div class="holographic-profile p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="orbitron text-xl font-bold text-white">Skills I Want to Learn</h3>
-                            <button onclick="toggleEdit('skillsWanted')" class="cyber-button text-sm">Edit</button>
+                    <!-- Preferences -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>Event Preferences</h3>
+                            <button class="edit-btn" id="editPreferencesBtn">
+                                <i class="fas fa-edit"></i>
+                            </button>
                         </div>
-                        
-                        <div id="skillsWantedDisplay">
-                            <!-- Skills will be populated by JavaScript -->
-                        </div>
-                        
-                        <div id="skillsWantedEdit" class="edit-mode" style="display: none;">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="uiux" value="UI/UX Design">
-                                    <label for="uiux">UI/UX Design</label>
+                        <div class="card-content">
+                            <div class="preferences-grid" id="preferencesGrid">
+                                <div class="preference-item">
+                                    <span class="preference-label">Event Types</span>
+                                    <span class="preference-value" id="eventTypes">Technology, Workshops</span>
                                 </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="mobile" value="Mobile Development">
-                                    <label for="mobile">Mobile Development</label>
+                                <div class="preference-item">
+                                    <span class="preference-label">Notification Settings</span>
+                                    <span class="preference-value" id="notificationSettings">Email & SMS</span>
                                 </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="machine" value="Machine Learning">
-                                    <label for="machine">Machine Learning</label>
+                                <div class="preference-item">
+                                    <span class="preference-label">Auto-registration</span>
+                                    <span class="preference-value" id="autoRegistration">Disabled</span>
                                 </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="devops" value="DevOps">
-                                    <label for="devops">DevOps</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="marketing" value="Digital Marketing">
-                                    <label for="marketing">Digital Marketing</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="video" value="Video Editing">
-                                    <label for="video">Video Editing</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="photography" value="Photography">
-                                    <label for="photography">Photography</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="writing" value="Content Writing">
-                                    <label for="writing">Content Writing</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="music" value="Music Production">
-                                    <label for="music">Music Production</label>
-                                </div>
-                                <div class="skill-checkbox">
-                                    <input type="checkbox" id="languages" value="Language Learning">
-                                    <label for="languages">Language Learning</label>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2 mt-4">
-                                <button onclick="saveSkills('skillsWanted')" class="cyber-button text-sm">Save</button>
-                                <button onclick="cancelEdit('skillsWanted')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right Column -->
-                <div class="space-y-8">
-                    <!-- About Me -->
-                    <div class="holographic-profile p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="orbitron text-xl font-bold text-white">About Me</h3>
-                            <button onclick="toggleEdit('about')" class="cyber-button text-sm">Edit</button>
+                <div class="profile-right">
+                    <!-- Upcoming Events -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>Upcoming Events</h3>
+                            <a href="index.html" class="view-all">View All</a>
                         </div>
-                        
-                        <div id="aboutDisplay">
-                            <!-- About text will be populated by JavaScript -->
-                        </div>
-                        
-                        <div id="aboutEdit" class="edit-mode" style="display: none;">
-                            <textarea id="aboutText" class="edit-textarea" placeholder="Tell us about yourself, your interests, and what you're passionate about..."></textarea>
-                            <div class="flex space-x-2 mt-4">
-                                <button onclick="saveAbout()" class="cyber-button text-sm">Save</button>
-                                <button onclick="cancelEdit('about')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
+                        <div class="card-content">
+                            <div class="upcoming-events-list" id="upcomingEventsList">
+                                <div class="loading-state">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Loading upcoming events...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Availability Status -->
-                    <div class="holographic-profile p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="orbitron text-xl font-bold text-white">Availability Status</h3>
-                            <button onclick="toggleEdit('availability')" class="cyber-button text-sm">Edit</button>
+                    <!-- Recent Activity -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
                         </div>
-                        
-                        <div id="availabilityDisplay">
-                            <div class="status-badge inline-block" id="availabilityStatus">
-                                <!-- Status will be populated by JavaScript -->
-                            </div>
-                        </div>
-                        
-                        <div id="availabilityEdit" class="edit-mode" style="display: none;">
-                            <select id="availabilityStatus" class="edit-input">
-                                <option value="available">🟢 Available for Swaps</option>
-                                <option value="busy">🟡 Busy but accepting requests</option>
-                                <option value="limited">🟠 Limited availability</option>
-                                <option value="offline">🔴 Currently offline</option>
-                            </select>
-                            <div class="flex space-x-2 mt-4">
-                                <button onclick="saveAvailability()" class="cyber-button text-sm">Save</button>
-                                <button onclick="cancelEdit('availability')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
+                        <div class="card-content">
+                            <div class="activity-list" id="activityList">
+                                <div class="loading-state">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Loading activity...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- My Swap Requests -->
-                    <div class="holographic-profile my-swap-requests-section p-6">
-                        <h3 class="orbitron text-xl font-bold text-white mb-6">My Swap Requests</h3>
-                        <div id="swapRequestsList" class="space-y-4">
-                            <!-- Swap requests will be displayed here -->
+                    <!-- Achievements -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3>Achievements</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="achievements-grid" id="achievementsGrid">
+                                <div class="achievement-item">
+                                    <i class="fas fa-trophy achievement-icon"></i>
+                                    <div class="achievement-info">
+                                        <span class="achievement-name">First Event</span>
+                                        <span class="achievement-desc">Attended your first event</span>
+                                    </div>
+                                </div>
+                                <div class="achievement-item">
+                                    <i class="fas fa-star achievement-icon"></i>
+                                    <div class="achievement-info">
+                                        <span class="achievement-name">Event Enthusiast</span>
+                                        <span class="achievement-desc">Attended 5+ events</span>
+                                    </div>
+                                </div>
+                                <div class="achievement-item">
+                                    <i class="fas fa-medal achievement-icon"></i>
+                                    <div class="achievement-info">
+                                        <span class="achievement-name">Regular Attendee</span>
+                                        <span class="achievement-desc">Attended 10+ events</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 mt-8">
-                <button onclick="saveAllChanges()" class="cyber-button flex-1">
-                    Save All Changes
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="modal-close" id="closeEditModal">
+                    <i class="fas fa-times"></i>
                 </button>
-                <button onclick="window.location.href='index.html'" class="cyber-button flex-1" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">
-                    Back to Home
-                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="editName">Full Name</label>
+                        <input type="text" id="editName" value="Alex Johnson" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTitle">Year of Study</label>
+                        <select id="editTitle" required>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                            <option value="Graduate">Graduate</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLocation">Department</label>
+                        <input type="text" id="editLocation" placeholder="e.g., Computer Science" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBio">Bio</label>
+                        <textarea id="editBio" rows="4" placeholder="Tell us about yourself and your interests..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelEdit">Cancel</button>
+                <button class="btn-primary" id="saveProfile">Save Changes</button>
             </div>
         </div>
     </div>
 
+    <!-- Edit Preferences Modal -->
+    <div class="modal" id="editPreferencesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Event Preferences</h3>
+                <button class="modal-close" id="closePreferencesModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editPreferencesForm">
+                    <div class="form-group">
+                        <label>Preferred Event Types</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="prefTechnology" value="Technology">
+                                Technology
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="prefWorkshop" value="Workshop">
+                                Workshop
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="prefConference" value="Conference">
+                                Conference
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="prefSeminar" value="Seminar">
+                                Seminar
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notification Preferences</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="notifEmail" value="email">
+                                Email Notifications
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="notifSMS" value="sms">
+                                SMS Notifications
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="notifPush" value="push">
+                                Push Notifications
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoRegister">
+                            Auto-register for events I'm interested in
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelPreferences">Cancel</button>
+                <button class="btn-primary" id="savePreferences">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
+        </div>
+    </div>
+
     <script>
-        // Profile Management
+        // Event Registration Profile JavaScript
+        const API_BASE_URL = 'http://localhost:5000/api';
         let currentUser = null;
 
-        function loadMyProfile() {
-            currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) {
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadProfileData();
+            setupEventListeners();
+        });
+
+        // Check if user is authenticated
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const userData = localStorage.getItem('currentUser');
+            
+            if (!token || !userData) {
                 window.location.href = 'login.html';
                 return;
             }
-            displayMyProfile();
+            
+            currentUser = JSON.parse(userData);
         }
 
-        function displayMyProfile() {
-            // Update profile display
-            document.getElementById('profileAvatar').textContent = currentUser.avatar;
-            document.getElementById('profilePhoto').textContent = currentUser.avatar;
-            document.getElementById('profileName').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
-            document.getElementById('profileTitle').textContent = currentUser.bio ? currentUser.bio.split(' ').slice(0, 3).join(' ') + '...' : 'Skill Swapper';
-            
-            // Load saved profile photo if it exists
-            if (currentUser.photoData) {
-                const photoElement = document.getElementById('profilePhoto');
-                const avatarElement = document.getElementById('profileAvatar');
-                
-                photoElement.style.backgroundImage = `url(${currentUser.photoData})`;
-                photoElement.style.backgroundSize = 'cover';
-                photoElement.style.backgroundPosition = 'center';
-                photoElement.textContent = '';
-                
-                avatarElement.style.backgroundImage = `url(${currentUser.photoData})`;
-                avatarElement.style.backgroundSize = 'cover';
-                avatarElement.style.backgroundPosition = 'center';
-                avatarElement.textContent = '';
+        // Load profile data
+        async function loadProfileData() {
+            try {
+                await loadUserProfile();
+                await loadRegisteredEvents();
+                await loadUpcomingEvents();
+                await loadEventHistory();
+                await loadRecentActivity();
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+                showToast('Error loading profile data', 'error');
             }
-            
-            // Update status
-            const statusElement = document.getElementById('profileStatus');
-            if (currentUser.availability === 'available') {
-                statusElement.textContent = '🟢 Available for Swaps';
-                statusElement.className = 'status-badge status-available';
-            } else if (currentUser.availability === 'busy') {
-                statusElement.textContent = '🟡 Busy but accepting requests';
-                statusElement.className = 'status-badge status-busy';
-            } else if (currentUser.availability === 'limited') {
-                statusElement.textContent = '🟠 Limited availability';
-                statusElement.className = 'status-badge status-limited';
-            } else if (currentUser.availability === 'offline') {
-                statusElement.textContent = '🔴 Currently offline';
-                statusElement.className = 'status-badge status-offline';
-            }
-            
-            // Update skills offered
-            updateSkillsDisplay('skillsOfferedDisplay', currentUser.skillsOffered || ['React', 'Node.js', 'Python']);
-            
-            // Update skills wanted
-            updateSkillsDisplay('skillsWantedDisplay', currentUser.skillsWanted || ['UI/UX Design', 'Mobile Development'], true);
-            
-            // Update about section
-            document.getElementById('aboutDisplay').innerHTML = `<p class="text-white/80 leading-relaxed">${currentUser.bio || 'Passionate about learning and sharing skills!'}</p>`;
-            
-            // Display swap requests
-            displayMySwapRequests();
         }
 
-        function updateSkillsDisplay(containerId, skills, isWanted = false) {
-            const container = document.getElementById(containerId);
+        // Load user profile
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    currentUser = data.data;
+                    updateProfileDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                updateProfileDisplay();
+            }
+        }
+
+        // Update profile display
+        function updateProfileDisplay() {
+            if (!currentUser) return;
             
-            if (!container) {
+            document.getElementById('profileName').textContent = currentUser.name || 'Student';
+            document.getElementById('profileTitle').textContent = currentUser.year || 'Student';
+            document.getElementById('profileLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${currentUser.department || 'University Campus'}`;
+            document.getElementById('aboutText').textContent = currentUser.bio || 'Tell us about yourself and your interests in events...';
+            
+            // Update profile stats
+            const registeredEvents = currentUser.registeredEvents || [];
+            const confirmedEvents = registeredEvents.filter(event => event.status === 'confirmed');
+            const waitingEvents = registeredEvents.filter(event => event.status === 'waiting');
+            
+            document.getElementById('totalEvents').textContent = confirmedEvents.length;
+            document.getElementById('upcomingEvents').textContent = confirmedEvents.filter(event => new Date(event.date) > new Date()).length;
+            document.getElementById('waitingList').textContent = waitingEvents.length;
+        }
+
+        // Load registered events
+        async function loadRegisteredEvents() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    const registeredEvents = data.data.registeredEvents || [];
+                    renderRegisteredEvents(registeredEvents);
+                } else {
+                    showNoEvents('registeredEventsList', 'You have not registered for any events yet.');
+                }
+            } catch (error) {
+                console.error('Error loading registered events:', error);
+                showNoEvents('registeredEventsList', 'Error loading events');
+            }
+        }
+
+        // Render registered events
+        function renderRegisteredEvents(events) {
+            const container = document.getElementById('registeredEventsList');
+            
+            if (events.length === 0) {
+                showNoEvents('registeredEventsList', 'You have not registered for any events yet.');
                 return;
             }
             
-            container.innerHTML = '';
-            
-            skills.forEach(skill => {
-                const tag = document.createElement('span');
-                tag.className = 'skill-tag';
-                if (isWanted) {
-                    tag.style.background = 'linear-gradient(45deg, #ff6b6b, #ff8e8e)';
-                }
-                tag.textContent = skill;
-                container.appendChild(tag);
-            });
-        }
-
-        // Edit functionality
-        function toggleEdit(section) {
-            const displayElement = document.getElementById(section === 'about' ? 'aboutDisplay' : section + 'Display');
-            const editElement = document.getElementById(section === 'about' ? 'aboutEdit' : section + 'Edit');
-            
-            if (displayElement.style.display === 'none') {
-                displayElement.style.display = 'block';
-                editElement.style.display = 'none';
-            } else {
-                displayElement.style.display = 'none';
-                editElement.style.display = 'block';
-                
-                // Pre-fill edit fields with current values
-                if (section === 'about') {
-                    document.getElementById('aboutText').value = currentUser.bio || '';
-                } else if (section === 'skillsOffered') {
-                    populateSkillsCheckboxes('skillsOfferedEdit', currentUser.skillsOffered || []);
-                } else if (section === 'skillsWanted') {
-                    populateSkillsCheckboxes('skillsWantedEdit', currentUser.skillsWanted || []);
-                } else if (section === 'availability') {
-                    document.getElementById('availabilityStatus').value = currentUser.availability || 'available';
-                }
-            }
-        }
-
-        function populateSkillsCheckboxes(containerId, selectedSkills) {
-            const checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]`);
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectedSkills.includes(checkbox.value);
-            });
-        }
-
-        function cancelEdit(section) {
-            const displayElement = document.getElementById(section === 'about' ? 'aboutDisplay' : section + 'Display');
-            const editElement = document.getElementById(section === 'about' ? 'aboutEdit' : section + 'Edit');
-            
-            displayElement.style.display = 'block';
-            editElement.style.display = 'none';
-        }
-
-        function saveSkills(section) {
-            const checkboxes = document.querySelectorAll(`#${section}Edit input[type="checkbox"]:checked`);
-            const skills = Array.from(checkboxes).map(cb => cb.value);
-            
-            if (section === 'skillsOffered') {
-                currentUser.skillsOffered = skills;
-                updateSkillsDisplay('skillsOfferedDisplay', skills);
-            } else {
-                currentUser.skillsWanted = skills;
-                updateSkillsDisplay('skillsWantedDisplay', skills, true);
-            }
-            
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            cancelEdit(section);
-        }
-
-        function saveAbout() {
-            const bio = document.getElementById('aboutText').value;
-            currentUser.bio = bio;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            
-            document.getElementById('aboutDisplay').innerHTML = `<p class="text-white/80 leading-relaxed">${bio}</p>`;
-            cancelEdit('about');
-        }
-
-        function saveAvailability() {
-            const status = document.getElementById('availabilityStatus').value;
-            currentUser.availability = status;
-            
-            const statusElement = document.getElementById('profileStatus');
-            if (status === 'available') {
-                statusElement.textContent = '🟢 Available for Swaps';
-                statusElement.className = 'status-badge status-available';
-            } else if (status === 'busy') {
-                statusElement.textContent = '🟡 Busy but accepting requests';
-                statusElement.className = 'status-badge status-busy';
-            } else if (status === 'limited') {
-                statusElement.textContent = '🟠 Limited availability';
-                statusElement.className = 'status-badge status-limited';
-            } else {
-                statusElement.textContent = '🔴 Currently offline';
-                statusElement.className = 'status-badge status-offline';
-            }
-            
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            cancelEdit('availability');
-        }
-
-        function saveAllChanges() {
-            alert('All changes saved successfully!');
-        }
-
-        // Photo upload functionality
-        document.getElementById('photoUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const photoData = e.target.result;
-                    
-                    // Update current user data
-                    currentUser.photoData = photoData;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    
-                    // Update profile photo display
-                    const photoElement = document.getElementById('profilePhoto');
-                    const avatarElement = document.getElementById('profileAvatar');
-                    
-                    photoElement.style.backgroundImage = `url(${photoData})`;
-                    photoElement.style.backgroundSize = 'cover';
-                    photoElement.style.backgroundPosition = 'center';
-                    photoElement.textContent = '';
-                    
-                    avatarElement.style.backgroundImage = `url(${photoData})`;
-                    avatarElement.style.backgroundSize = 'cover';
-                    avatarElement.style.backgroundPosition = 'center';
-                    avatarElement.textContent = '';
-                    
-                    // Update navbar avatar if on same page
-                    const navbarAvatar = document.querySelector('.navbar-avatar');
-                    if (navbarAvatar) {
-                        navbarAvatar.style.backgroundImage = `url(${photoData})`;
-                        navbarAvatar.style.backgroundSize = 'cover';
-                        navbarAvatar.style.backgroundPosition = 'center';
-                        navbarAvatar.textContent = '';
-                    }
-                    
-                    // Show success message
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                    successMsg.textContent = 'Profile photo updated successfully!';
-                    document.body.appendChild(successMsg);
-                    
-                    setTimeout(() => {
-                        successMsg.remove();
-                    }, 3000);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Auth status check
-        function checkAuthStatus() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const navAuth = document.getElementById('navAuth');
-            const navGuest = document.getElementById('navGuest');
-            
-            if (currentUser && currentUser.isLoggedIn) {
-                // User is logged in - show profile and logout
-                navGuest.style.display = 'none';
-                navAuth.style.display = 'block';
-                
-                // Update navbar with user info
-                const avatarStyle = currentUser.photoData ? 
-                    `style="background-image: url(${currentUser.photoData}); background-size: cover; background-position: center;"` : '';
-                
-                navAuth.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm navbar-avatar" ${avatarStyle}>
-                            ${currentUser.photoData ? '' : currentUser.avatar}
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-white text-sm font-semibold" id="navUserName">${currentUser.firstName}</span>
-                            <span class="text-cyan-400 text-xs" id="navUserStatus">${currentUser.availability || 'Available'}</span>
-                        </div>
-                        <button onclick="logout()" class="cyber-button text-xs px-3 py-1">
-                            Logout
-                        </button>
-                        <a href="index.html" class="cyber-button text-xs px-3 py-1" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">
-                            Home
-                        </a>
-                        <a href="admin-panel.html" class="cyber-button text-xs px-3 py-1" style="background: linear-gradient(45deg, #ffd700, #ffed4e); color: black;">
-                            Admin Panel
-                        </a>
-                    </div>
-                `;
-            } else {
-                // User is not logged in - show login and register
-                navAuth.style.display = 'none';
-                navGuest.style.display = 'block';
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.reload();
-        }
-
-        function displayMySwapRequests() {
-            const swapRequests = JSON.parse(localStorage.getItem('swapRequests')) || [];
-            const myRequests = swapRequests.filter(req => 
-                req.fromUser.name === `${currentUser.firstName} ${currentUser.lastName}` ||
-                req.toUser.name === `${currentUser.firstName} ${currentUser.lastName}`
-            );
-            
-            const swapRequestsList = document.getElementById('swapRequestsList');
-            if (!swapRequestsList) return;
-            
-            if (myRequests.length === 0) {
-                swapRequestsList.innerHTML = `
-                    <div class="text-center py-8 text-white/60">
-                        <div class="text-4xl mb-4">📋</div>
-                        <h3 class="text-lg font-semibold mb-2">No swap requests yet</h3>
-                        <p>Start connecting with other users to see your swap requests here!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            swapRequestsList.innerHTML = myRequests.map(request => {
-                const isFromMe = request.fromUser.name === `${currentUser.firstName} ${currentUser.lastName}`;
-                const otherUser = isFromMe ? request.toUser : request.fromUser;
-                const statusClass = getStatusClass(request.status);
-                const statusText = getStatusText(request.status);
+            container.innerHTML = events.map(event => {
+                const statusClass = event.status === 'confirmed' ? 'confirmed' : 
+                                  event.status === 'waiting' ? 'waiting' : 'pending';
+                const statusText = event.status === 'confirmed' ? 'Confirmed' : 
+                                 event.status === 'waiting' ? 'Waiting List' : 'Pending';
                 
                 return `
-                    <div class="glass p-4 rounded-lg">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <h4 class="text-white font-semibold">
-                                    ${isFromMe ? 'To: ' : 'From: '} ${otherUser.name}
-                                </h4>
-                                <p class="text-gray-400 text-sm">${new Date(request.requestDate).toLocaleDateString()}</p>
-                            </div>
-                            <span class="${statusClass} text-sm font-semibold">${statusText}</span>
+                    <div class="event-item">
+                        <div class="event-header">
+                            <h4 class="event-name">${event.eventName}</h4>
+                            <span class="event-status ${statusClass}">${statusText}</span>
                         </div>
-                        <div class="text-sm text-gray-300 mb-3">
-                            <div><strong>Skills Offered:</strong> ${request.fromUserSkills.join(', ')}</div>
-                            <div><strong>Skills Wanted:</strong> ${request.toUserSkills.join(', ')}</div>
-                        </div>
-                        ${request.status === 'pending' && !isFromMe ? `
-                            <div class="flex space-x-2">
-                                <button onclick="respondToSwap('${request.id}', 'accepted')" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors">
-                                    Accept
-                                </button>
-                                <button onclick="respondToSwap('${request.id}', 'rejected')" class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors">
-                                    Reject
-                                </button>
+                        <div class="event-details">
+                            <div class="event-date">
+                                <i class="fas fa-calendar"></i>
+                                ${new Date(event.date).toLocaleDateString()}
                             </div>
-                        ` : ''}
+                            <div class="event-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                ${event.location || 'TBA'}
+                            </div>
+                            <div class="event-capacity">
+                                <i class="fas fa-users"></i>
+                                ${event.availableSeats} of ${event.capacity} seats available
+                                ${event.seatNumber ? ` | Seat #${event.seatNumber}` : ''}
+                            </div>
+                            <div class="registration-date">
+                                <i class="fas fa-clock"></i>
+                                Registered: ${new Date(event.registrationDate).toLocaleString()}
+                            </div>
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn-small" onclick="viewEventDetails('${event.eventId}')">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            ${event.status === 'confirmed' ? `
+                                <button class="btn-small danger" onclick="cancelRegistration('${event.eventId}')">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
                 `;
             }).join('');
         }
-        
-        function getStatusClass(status) {
-            switch(status) {
-                case 'pending': return 'text-yellow-400';
-                case 'accepted': return 'text-green-400';
-                case 'rejected': return 'text-red-400';
-                case 'completed': return 'text-blue-400';
-                default: return 'text-gray-400';
+
+        // Load upcoming events
+        async function loadUpcomingEvents() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/events`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const upcomingEvents = data.data.events
+                        .filter(event => new Date(event.date) > new Date())
+                        .slice(0, 3);
+                    renderUpcomingEvents(upcomingEvents);
+                } else {
+                    showNoEvents('upcomingEventsList', 'No upcoming events');
+                }
+            } catch (error) {
+                console.error('Error loading upcoming events:', error);
+                showNoEvents('upcomingEventsList', 'Error loading events');
             }
         }
-        
-        function getStatusText(status) {
-            switch(status) {
-                case 'pending': return '⏳ Pending';
-                case 'accepted': return '✅ Accepted';
-                case 'rejected': return '❌ Rejected';
-                case 'completed': return '🎉 Completed';
-                default: return '❓ Unknown';
-            }
-        }
-        
-        function respondToSwap(requestId, response) {
-            const swapRequests = JSON.parse(localStorage.getItem('swapRequests')) || [];
-            const requestIndex = swapRequests.findIndex(req => req.id == requestId);
+
+        // Render upcoming events
+        function renderUpcomingEvents(events) {
+            const container = document.getElementById('upcomingEventsList');
             
-            if (requestIndex !== -1) {
-                swapRequests[requestIndex].status = response;
-                localStorage.setItem('swapRequests', JSON.stringify(swapRequests));
-                displayMySwapRequests();
+            if (events.length === 0) {
+                showNoEvents('upcomingEventsList', 'No upcoming events');
+                return;
+            }
+            
+            container.innerHTML = events.map(event => `
+                <div class="upcoming-event-item">
+                    <div class="event-info">
+                        <h4 class="event-name">${event.eventName}</h4>
+                        <div class="event-meta">
+                            <span class="event-date">
+                                <i class="fas fa-calendar"></i>
+                                ${new Date(event.date).toLocaleDateString()}
+                            </span>
+                            <span class="event-capacity">
+                                <i class="fas fa-users"></i>
+                                ${event.availableSeats || 0} seats left
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btn-small primary" onclick="registerForEvent('${event._id}')">
+                        Register
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Load event history
+        async function loadEventHistory() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 
-                const successMsg = document.createElement('div');
-                successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-                successMsg.textContent = `Swap request ${response}!`;
-                document.body.appendChild(successMsg);
-                
-                setTimeout(() => {
-                    successMsg.remove();
-                }, 3000);
+                const data = await response.json();
+                if (data.success) {
+                    const pastEvents = (data.data.registeredEvents || [])
+                        .filter(event => new Date(event.date) < new Date())
+                        .slice(0, 5);
+                    renderEventHistory(pastEvents);
+                } else {
+                    showNoEvents('eventHistoryList', 'No event history');
+                }
+            } catch (error) {
+                console.error('Error loading event history:', error);
+                showNoEvents('eventHistoryList', 'Error loading history');
             }
         }
 
-        // Initialize
-        checkAuthStatus();
-        loadMyProfile();
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                saveAllChanges();
+        // Render event history
+        function renderEventHistory(events) {
+            const container = document.getElementById('eventHistoryList');
+            
+            if (events.length === 0) {
+                showNoEvents('eventHistoryList', 'No event history');
+                return;
             }
-        });
+            
+            container.innerHTML = events.map(event => {
+                const statusClass = event.status === 'confirmed' ? 'confirmed' : 
+                                  event.status === 'waiting' ? 'waiting' : 'pending';
+                const statusText = event.status === 'confirmed' ? 'Attended' : 
+                                 event.status === 'waiting' ? 'Waitlisted' : 'Pending';
+                
+                return `
+                    <div class="history-item">
+                        <div class="history-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-event">${event.eventName}</div>
+                            <div class="history-date">${new Date(event.date).toLocaleDateString()}</div>
+                            <div class="history-location">${event.location || 'TBA'}</div>
+                        </div>
+                        <div class="history-status ${statusClass}">
+                            ${statusText}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load recent activity
+        async function loadRecentActivity() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    const registeredEvents = data.data.registeredEvents || [];
+                    const activities = registeredEvents.slice(0, 3).map(event => {
+                        const timeAgo = getTimeAgo(new Date(event.registrationDate));
+                        return {
+                            type: event.status === 'confirmed' ? 'registration' : 'waiting',
+                            text: event.status === 'confirmed' ? 
+                                `Registered for ${event.eventName}` : 
+                                `Added to waiting list for ${event.eventName}`,
+                            time: timeAgo,
+                            icon: event.status === 'confirmed' ? 'fas fa-calendar-plus' : 'fas fa-clock'
+                        };
+                    });
+                    
+                    // Add some default activities if no events
+                    if (activities.length === 0) {
+                        activities.push(
+                            {
+                                type: "info",
+                                text: "Welcome to Event Registration!",
+                                time: "Just now",
+                                icon: "fas fa-info-circle"
+                            },
+                            {
+                                type: "info",
+                                text: "Browse available events to get started",
+                                time: "Just now",
+                                icon: "fas fa-search"
+                            }
+                        );
+                    }
+                    
+                    renderRecentActivity(activities);
+                } else {
+                    renderRecentActivity([]);
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                renderRecentActivity([]);
+            }
+        }
+        
+        // Helper function to get time ago
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+            return `${Math.floor(diffInSeconds / 86400)} days ago`;
+        }
+
+        // Render recent activity
+        function renderRecentActivity(activities) {
+            const container = document.getElementById('activityList');
+            
+            container.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon ${activity.type}">
+                        <i class="${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">${activity.text}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show no events message
+        function showNoEvents(containerId, message) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="no-events">
+                    <i class="fas fa-calendar-times"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('editProfileBtn').addEventListener('click', openEditProfileModal);
+            document.getElementById('editAboutBtn').addEventListener('click', editAbout);
+            document.getElementById('editPreferencesBtn').addEventListener('click', openPreferencesModal);
+            document.getElementById('refreshEventsBtn').addEventListener('click', loadRegisteredEvents);
+            
+            document.getElementById('closeEditModal').addEventListener('click', closeEditProfileModal);
+            document.getElementById('closePreferencesModal').addEventListener('click', closePreferencesModal);
+            document.getElementById('cancelEdit').addEventListener('click', closeEditProfileModal);
+            document.getElementById('cancelPreferences').addEventListener('click', closePreferencesModal);
+            document.getElementById('saveProfile').addEventListener('click', saveProfile);
+            document.getElementById('savePreferences').addEventListener('click', savePreferences);
+            
+            const avatarEdit = document.querySelector('.avatar-edit');
+            const avatarInput = document.getElementById('avatarInput');
+            if (avatarEdit && avatarInput) {
+                avatarEdit.addEventListener('click', () => avatarInput.click());
+                avatarInput.addEventListener('change', handleAvatarUpload);
+            }
+        }
+
+        // Modal functions
+        function openEditProfileModal() {
+            document.getElementById('editName').value = currentUser.name || '';
+            document.getElementById('editTitle').value = currentUser.year || '1st Year';
+            document.getElementById('editLocation').value = currentUser.department || '';
+            document.getElementById('editBio').value = currentUser.bio || '';
+            document.getElementById('editProfileModal').classList.add('active');
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').classList.remove('active');
+        }
+
+        function openPreferencesModal() {
+            document.getElementById('editPreferencesModal').classList.add('active');
+        }
+
+        function closePreferencesModal() {
+            document.getElementById('editPreferencesModal').classList.remove('active');
+        }
+
+        // Save functions
+        async function saveProfile() {
+            const name = document.getElementById('editName').value;
+            const year = document.getElementById('editTitle').value;
+            const department = document.getElementById('editLocation').value;
+            const bio = document.getElementById('editBio').value;
+            
+            if (!name || !year || !department) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, year, department, bio })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    currentUser = data.data;
+                    updateProfileDisplay();
+                    closeEditProfileModal();
+                    showToast('Profile updated successfully!', 'success');
+                } else {
+                    showToast(data.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showToast('Error updating profile', 'error');
+            }
+        }
+
+        function editAbout() {
+            const newBio = prompt('Update your bio:', currentUser.bio || '');
+            if (newBio && newBio.trim()) {
+                currentUser.bio = newBio.trim();
+                document.getElementById('aboutText').textContent = newBio.trim();
+                showToast('Bio updated successfully!', 'success');
+            }
+        }
+
+        function savePreferences() {
+            const eventTypes = Array.from(document.querySelectorAll('#editPreferencesForm input[type="checkbox"]:checked'))
+                .map(cb => cb.value);
+            document.getElementById('eventTypes').textContent = eventTypes.join(', ') || 'None selected';
+            closePreferencesModal();
+            showToast('Preferences updated successfully!', 'success');
+        }
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                    showToast('Profile picture updated successfully!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Event functions
+        async function registerForEvent(eventId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/registration/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ eventId })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Successfully registered for event!', 'success');
+                    loadRegisteredEvents();
+                    loadUpcomingEvents();
+                } else {
+                    showToast(data.message || 'Failed to register for event', 'error');
+                }
+            } catch (error) {
+                console.error('Error registering for event:', error);
+                showToast('Error registering for event', 'error');
+            }
+        }
+
+        async function cancelRegistration(eventId) {
+            if (!confirm('Are you sure you want to cancel your registration?')) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/registration/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ eventId })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Registration cancelled successfully!', 'success');
+                    loadRegisteredEvents();
+                    loadUpcomingEvents();
+                } else {
+                    showToast(data.message || 'Failed to cancel registration', 'error');
+                }
+            } catch (error) {
+                console.error('Error cancelling registration:', error);
+                showToast('Error cancelling registration', 'error');
+            }
+        }
+
+        function viewEventDetails(eventId) {
+            showToast('Event details coming soon!', 'success');
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toastElement = document.getElementById('toast');
+            const toastMessage = document.querySelector('.toast-message');
+            const toastIcon = document.querySelector('.toast-icon');
+            
+            toastMessage.textContent = message;
+            toastElement.className = `toast ${type}`;
+            
+            if (type === 'success') {
+                toastIcon.className = 'toast-icon fas fa-check-circle';
+            } else {
+                toastIcon.className = 'toast-icon fas fa-exclamation-circle';
+            }
+            
+            toastElement.classList.add('show');
+            setTimeout(() => toastElement.classList.remove('show'), 3000);
+        }
     </script>
 </body>
-</html> 
+</html>

@@ -111,6 +111,15 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
+        .form-input.border-red-400 {
+            border-color: #f87171;
+            box-shadow: 0 0 20px rgba(248, 113, 113, 0.3);
+        }
+
+        .form-input.border-white\/20 {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
         /* Form Select */
         .form-select {
             background: rgba(255, 255, 255, 0.1);
@@ -311,7 +320,11 @@
             </div>
             
             <div class="flex items-center space-x-4">
-                <button onclick="createEvent()" class="cyber-button success">
+                <button onclick="refreshData()" class="cyber-button">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </button>
+                
+                <button onclick="testModal()" class="cyber-button" style="background: linear-gradient(45deg, #9f7aea, #ed8936);">
                     <i class="fas fa-plus mr-2"></i>Create Event
                 </button>
                 <button onclick="logout()" class="cyber-button danger">
@@ -327,19 +340,31 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="stat-card">
-                    <div class="stat-number" id="totalEvents">0</div>
+                    <div class="stat-number" id="totalEvents">
+                        <div class="loading-spinner" id="eventsSpinner"></div>
+                        <span id="eventsValue">0</span>
+            </div>
                     <div class="stat-label">Total Events</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="totalStudents">0</div>
+                    <div class="stat-number" id="totalStudents">
+                        <div class="loading-spinner" id="studentsSpinner"></div>
+                        <span id="studentsValue">0</span>
+                </div>
                     <div class="stat-label">Total Students</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="activeEvents">0</div>
+                    <div class="stat-number" id="activeEvents">
+                        <div class="loading-spinner" id="activeSpinner"></div>
+                        <span id="activeValue">0</span>
+                </div>
                     <div class="stat-label">Active Events</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="totalRegistrations">0</div>
+                    <div class="stat-number" id="totalRegistrations">
+                        <div class="loading-spinner" id="registrationsSpinner"></div>
+                        <span id="registrationsValue">0</span>
+                    </div>
                     <div class="stat-label">Total Registrations</div>
                 </div>
             </div>
@@ -355,24 +380,31 @@
 
                 <div class="admin-table">
                     <table class="w-full">
-                        <thead>
+                            <thead>
                             <tr>
                                 <th>Event Name</th>
                                 <th>Date</th>
-                                <th>Capacity</th>
-                                <th>Registered</th>
+                                <th>Capacity & Available</th>
+                                <th>Registrations</th>
                                 <th>Status</th>
                                 <th>Actions</th>
-                            </tr>
-                        </thead>
+                                </tr>
+                            </thead>
                         <tbody id="eventsTableBody">
-                            <!-- Events will be loaded here -->
-                        </tbody>
-                    </table>
+                            <tr id="eventsLoadingRow">
+                                <td colspan="6" class="text-center text-white/60 py-8">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <div class="loading-spinner"></div>
+                                        <span>Loading events...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                 </div>
             </div>
-        </div>
-    </div>
+                    </div>
+                </div>
 
     <!-- Create Event Modal -->
     <div id="createEventModal" class="modal">
@@ -380,66 +412,99 @@
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold text-white">Create New Event</h3>
                 <button onclick="closeModal()" class="text-white/60 hover:text-white text-2xl">&times;</button>
+                    </div>
+
+            <form id="createEventForm" class="space-y-6">
+                <!-- Event Basic Information -->
+                <div class="bg-white/5 p-4 rounded-lg">
+                    <h4 class="text-lg font-semibold text-cyan-400 mb-4">Event Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-white text-sm font-semibold mb-2">
+                                Event Name <span class="text-red-400">*</span>
+                            </label>
+                            <input type="text" id="eventName" class="form-input" placeholder="e.g., Tech Conference 2024" required>
+                </div>
+                        <div>
+                            <label class="block text-white text-sm font-semibold mb-2">
+                                Organizer <span class="text-red-400">*</span>
+                            </label>
+                            <input type="text" id="organizer" class="form-input" placeholder="e.g., University Tech Club" required>
             </div>
+        </div>
 
-            <form id="createEventForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-white text-sm font-semibold mb-2">Event Name</label>
-                        <input type="text" id="eventName" class="form-input" placeholder="Enter event name" required>
+                    <div class="mt-4">
+                        <label class="block text-white text-sm font-semibold mb-2">Description</label>
+                        <textarea id="description" class="form-input" rows="3" placeholder="Describe the event, topics covered, and what participants will learn..."></textarea>
                     </div>
-                    <div>
-                        <label class="block text-white text-sm font-semibold mb-2">Organizer</label>
-                        <input type="text" id="organizer" class="form-input" placeholder="Enter organizer name" required>
+    </div>
+
+                <!-- Event Details -->
+                <div class="bg-white/5 p-4 rounded-lg">
+                    <h4 class="text-lg font-semibold text-cyan-400 mb-4">Event Details</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-white text-sm font-semibold mb-2">
+                                Event Date & Time <span class="text-red-400">*</span>
+                            </label>
+                            <input type="datetime-local" id="eventDate" class="form-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-white text-sm font-semibold mb-2">
+                                Capacity <span class="text-red-400">*</span>
+                            </label>
+                            <input type="number" id="capacity" class="form-input" placeholder="e.g., 50" min="1" required>
+                        </div>
+                        <div>
+                            <label class="block text-white text-sm font-semibold mb-2">Location</label>
+                            <input type="text" id="location" class="form-input" placeholder="e.g., Main Auditorium, Room 101">
+                        </div>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-white text-sm font-semibold mb-2">Description</label>
-                    <textarea id="description" class="form-input" rows="3" placeholder="Enter event description"></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-white text-sm font-semibold mb-2">Date</label>
-                        <input type="datetime-local" id="eventDate" class="form-input" required>
-                    </div>
-                    <div>
-                        <label class="block text-white text-sm font-semibold mb-2">Capacity</label>
-                        <input type="number" id="capacity" class="form-input" placeholder="Max participants" required>
-                    </div>
-                    <div>
-                        <label class="block text-white text-sm font-semibold mb-2">Location</label>
-                        <input type="text" id="location" class="form-input" placeholder="Event location">
+                <!-- Contact Information -->
+                <div class="bg-white/5 p-4 rounded-lg">
+                    <h4 class="text-lg font-semibold text-cyan-400 mb-4">Contact Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-white text-sm font-semibold mb-2">
+                                Organizer Email <span class="text-red-400">*</span>
+                            </label>
+                            <input type="email" id="organizerEmail" class="form-input" placeholder="organizer@university.edu" required>
+                        </div>
+                        <div>
+                            <label class="block text-white text-sm font-semibold mb-2">Registration Deadline</label>
+                            <input type="datetime-local" id="registrationDeadline" class="form-input">
+                            <p class="text-xs text-white/60 mt-1">Leave empty if no deadline</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Event Tags -->
+                <div class="bg-white/5 p-4 rounded-lg">
+                    <h4 class="text-lg font-semibold text-cyan-400 mb-4">Event Tags</h4>
                     <div>
-                        <label class="block text-white text-sm font-semibold mb-2">Organizer Email</label>
-                        <input type="email" id="organizerEmail" class="form-input" placeholder="organizer@email.com" required>
-                    </div>
-                    <div>
-                        <label class="block text-white text-sm font-semibold mb-2">Registration Deadline</label>
-                        <input type="datetime-local" id="registrationDeadline" class="form-input">
+                        <label class="block text-white text-sm font-semibold mb-2">Tags (comma separated)</label>
+                        <input type="text" id="tags" class="form-input" placeholder="Technology, Workshop, Conference, AI, Programming">
+                        <p class="text-xs text-white/60 mt-1">Help students find your event by adding relevant tags</p>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-white text-sm font-semibold mb-2">Tags (comma separated)</label>
-                    <input type="text" id="tags" class="form-input" placeholder="Technology, Workshop, Conference">
-                </div>
-
-                <div class="flex justify-end space-x-4">
-                    <button type="button" onclick="closeModal()" class="cyber-button danger">Cancel</button>
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-4 border-t border-white/10">
+                    <button type="button" onclick="closeModal()" class="cyber-button danger">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
                     <button type="submit" class="cyber-button success">
-                        <span id="createEventText">Create Event</span>
+                        <span id="createEventText">
+                            <i class="fas fa-plus mr-2"></i>Create Event
+                        </span>
                         <div id="createEventSpinner" class="loading-spinner hidden"></div>
                     </button>
-                </div>
+                        </div>
             </form>
-        </div>
-    </div>
+                        </div>
+                    </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast">
@@ -458,7 +523,163 @@
             checkAuth();
             loadDashboard();
             loadEvents();
+            
+            // Auto-refresh data every 30 seconds
+            setInterval(() => {
+                loadDashboard();
+                loadEvents();
+            }, 30000);
+            
+            // Ensure form event listener is properly attached
+            setupFormEventListeners();
         });
+        
+        // Setup form event listeners
+        function setupFormEventListeners() {
+            const form = document.getElementById('createEventForm');
+            if (form) {
+                console.log('Form found, setting up event listener');
+                // Remove any existing listeners
+                form.removeEventListener('submit', handleFormSubmit);
+                // Add new listener
+                form.addEventListener('submit', handleFormSubmit);
+            } else {
+                console.error('Create event form not found!');
+            }
+        }
+        
+        // Form submit handler
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            console.log('Form submit handler called!');
+            
+            // Get form elements
+            const eventName = document.getElementById('eventName');
+            const description = document.getElementById('description');
+            const eventDate = document.getElementById('eventDate');
+            const capacity = document.getElementById('capacity');
+            const location = document.getElementById('location');
+            const organizer = document.getElementById('organizer');
+            const organizerEmail = document.getElementById('organizerEmail');
+            const registrationDeadline = document.getElementById('registrationDeadline');
+            const tags = document.getElementById('tags');
+            
+            // Clear previous validation errors
+            clearValidationErrors();
+            
+            // Validate required fields
+            let isValid = true;
+            
+            if (!eventName.value.trim()) {
+                showFieldError(eventName, 'Event name is required');
+                isValid = false;
+            }
+            
+            if (!organizer.value.trim()) {
+                showFieldError(organizer, 'Organizer name is required');
+                isValid = false;
+            }
+            
+            if (!eventDate.value) {
+                showFieldError(eventDate, 'Event date is required');
+                isValid = false;
+            } else {
+                // Check if date is in the future
+                const eventDateTime = new Date(eventDate.value);
+                const now = new Date();
+                if (eventDateTime <= now) {
+                    showFieldError(eventDate, 'Event date must be in the future');
+                    isValid = false;
+                }
+            }
+            
+            if (!capacity.value || parseInt(capacity.value) < 1) {
+                showFieldError(capacity, 'Capacity must be at least 1');
+                isValid = false;
+            }
+            
+            if (!organizerEmail.value.trim()) {
+                showFieldError(organizerEmail, 'Organizer email is required');
+                isValid = false;
+            } else if (!isValidEmail(organizerEmail.value)) {
+                showFieldError(organizerEmail, 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            // Check registration deadline if provided
+            if (registrationDeadline.value) {
+                const deadlineDate = new Date(registrationDeadline.value);
+                const eventDateTime = new Date(eventDate.value);
+                if (deadlineDate >= eventDateTime) {
+                    showFieldError(registrationDeadline, 'Registration deadline must be before event date');
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
+                showToast('Please fix the errors above', 'error');
+                return;
+            }
+            
+            const formData = {
+                eventName: eventName.value.trim(),
+                description: description.value.trim(),
+                date: eventDate.value,
+                capacity: parseInt(capacity.value),
+                location: location.value.trim(),
+                organizer: organizer.value.trim(),
+                organizerEmail: organizerEmail.value.trim(),
+                registrationDeadline: registrationDeadline.value || null,
+                tags: tags.value.split(',').map(tag => tag.trim()).filter(tag => tag)
+            };
+            
+            console.log('Form data:', formData);
+            
+            const createBtn = document.getElementById('createEventForm').querySelector('button[type="submit"]');
+            const createText = document.getElementById('createEventText');
+            const createSpinner = document.getElementById('createEventSpinner');
+            
+            // Show loading state
+            createBtn.disabled = true;
+            createText.classList.add('hidden');
+            createSpinner.classList.remove('hidden');
+            
+            try {
+                const token = localStorage.getItem('token');
+                console.log('Sending request to:', `${API_BASE_URL}/events`);
+                console.log('Token:', token ? 'Present' : 'Missing');
+                
+                const response = await fetch(`${API_BASE_URL}/events`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (data.success) {
+                    showToast('Event created successfully!', 'success');
+                    closeModal();
+                    loadEvents();
+                    loadDashboard();
+                } else {
+                    showToast(data.message || 'Failed to create event', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating event:', error);
+                showToast('Error creating event: ' + error.message, 'error');
+            } finally {
+                // Hide loading state
+                createBtn.disabled = false;
+                createText.classList.remove('hidden');
+                createSpinner.classList.add('hidden');
+            }
+        }
 
         // Check if user is authenticated and is admin
         function checkAuth() {
@@ -484,6 +705,9 @@
         // Load dashboard statistics
         async function loadDashboard() {
             try {
+                // Show loading states
+                showLoadingStates();
+                
                 const token = localStorage.getItem('token');
                 const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
                     headers: {
@@ -494,14 +718,66 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    document.getElementById('totalEvents').textContent = data.data.statistics.totalEvents;
-                    document.getElementById('totalStudents').textContent = data.data.statistics.totalStudents;
-                    document.getElementById('activeEvents').textContent = data.data.statistics.activeEvents;
-                    document.getElementById('totalRegistrations').textContent = data.data.statistics.totalStudents; // Placeholder
+                    // Update statistics with animation
+                    updateStatValue('eventsValue', data.data.statistics.totalEvents);
+                    updateStatValue('studentsValue', data.data.statistics.totalStudents);
+                    updateStatValue('activeValue', data.data.statistics.activeEvents);
+                    updateStatValue('registrationsValue', data.data.statistics.totalRegistrations || 0);
+                    
+                    // Hide loading states
+                    hideLoadingStates();
+                } else {
+                    hideLoadingStates();
+                    showToast('Failed to load dashboard data', 'error');
                 }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
+                hideLoadingStates();
+                showToast('Error loading dashboard data', 'error');
             }
+        }
+
+        // Show loading states
+        function showLoadingStates() {
+            document.getElementById('eventsSpinner').classList.remove('hidden');
+            document.getElementById('studentsSpinner').classList.remove('hidden');
+            document.getElementById('activeSpinner').classList.remove('hidden');
+            document.getElementById('registrationsSpinner').classList.remove('hidden');
+        }
+
+        // Hide loading states
+        function hideLoadingStates() {
+            document.getElementById('eventsSpinner').classList.add('hidden');
+            document.getElementById('studentsSpinner').classList.add('hidden');
+            document.getElementById('activeSpinner').classList.add('hidden');
+            document.getElementById('registrationsSpinner').classList.add('hidden');
+        }
+
+        // Update stat value with animation
+        function updateStatValue(elementId, value) {
+            const element = document.getElementById(elementId);
+            const currentValue = parseInt(element.textContent) || 0;
+            const targetValue = value;
+            
+            if (currentValue === targetValue) return;
+            
+            // Animate the number change
+            const duration = 1000;
+            const startTime = Date.now();
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.round(currentValue + (targetValue - currentValue) * progress);
+                
+                element.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
         }
 
         // Load events
@@ -519,10 +795,14 @@
                 if (data.success) {
                     renderEventsTable(data.data.events);
                 } else {
+                    // Hide loading and show error
+                    document.getElementById('eventsLoadingRow').style.display = 'none';
                     showToast(data.message || 'Failed to load events', 'error');
                 }
             } catch (error) {
                 console.error('Error loading events:', error);
+                // Hide loading and show error
+                document.getElementById('eventsLoadingRow').style.display = 'none';
                 showToast('Error loading events', 'error');
             }
         }
@@ -530,6 +810,12 @@
         // Render events table
         function renderEventsTable(events) {
             const tbody = document.getElementById('eventsTableBody');
+            
+            // Hide loading row
+            const loadingRow = document.getElementById('eventsLoadingRow');
+            if (loadingRow) {
+                loadingRow.style.display = 'none';
+            }
             
             if (events.length === 0) {
                 tbody.innerHTML = `
@@ -546,8 +832,18 @@
                 <tr>
                     <td class="font-semibold">${event.eventName}</td>
                     <td>${new Date(event.date).toLocaleDateString()}</td>
-                    <td>${event.capacity}</td>
-                    <td>${event.registeredCount || 0}</td>
+                    <td>
+                        <div class="text-sm">
+                            <div>Capacity: ${event.capacity}</div>
+                            <div class="text-cyan-400">Available: ${event.availableSeats || 0}</div>
+                    </div>
+                    </td>
+                    <td>
+                        <div class="text-sm">
+                            <div>Registered: ${event.registeredCount || 0}</div>
+                            <div class="text-yellow-400">Waiting: ${event.waitingListCount || 0}</div>
+                        </div>
+                    </td>
                     <td>
                         <span class="status-badge status-${event.registrationStatus}">
                             ${event.registrationStatus}
@@ -556,21 +852,149 @@
                     <td>
                         <button onclick="viewEventDetails('${event._id}')" class="cyber-button mr-2">
                             <i class="fas fa-eye"></i>
-                        </button>
+                                </button>
                         <button onclick="editEvent('${event._id}')" class="cyber-button success mr-2">
                             <i class="fas fa-edit"></i>
-                        </button>
+                                </button>
                         <button onclick="deleteEvent('${event._id}')" class="cyber-button danger">
                             <i class="fas fa-trash"></i>
-                        </button>
+                            </button>
                     </td>
                 </tr>
             `).join('');
         }
 
+        // Refresh data
+        function refreshData() {
+            loadDashboard();
+            loadEvents();
+            showToast('Data refreshed', 'success');
+        }
+
         // Create event
         function createEvent() {
-            document.getElementById('createEventModal').classList.add('active');
+            console.log('createEvent function called!');
+            
+            try {
+                // Show the modal first
+                const modal = document.getElementById('createEventModal');
+                if (modal) {
+                    console.log('Modal found, showing...');
+                    modal.classList.add('active');
+                    console.log('Modal classes after adding active:', modal.className);
+                    
+                    // Set default values after showing modal
+                    setTimeout(() => {
+                        setDefaultFormValues();
+                    }, 100);
+                    
+                    console.log('Modal should now be visible');
+                } else {
+                    console.error('Modal not found!');
+                    showToast('Modal not found!', 'error');
+                }
+            } catch (error) {
+                console.error('Error in createEvent:', error);
+                showToast('Error opening form: ' + error.message, 'error');
+            }
+        }
+        
+        // Test function to verify form is working
+        function testCreateEvent() {
+            console.log('Testing create event functionality...');
+            
+            // Set test values
+            document.getElementById('eventName').value = 'Test Event ' + new Date().getTime();
+            document.getElementById('description').value = 'This is a test event created from the button';
+            document.getElementById('eventDate').value = '2025-12-31T15:00';
+            document.getElementById('capacity').value = '25';
+            document.getElementById('location').value = 'Test Location';
+            document.getElementById('organizer').value = 'Test Organizer';
+            document.getElementById('organizerEmail').value = 'test@university.edu';
+            document.getElementById('registrationDeadline').value = '2025-12-30T12:00';
+            document.getElementById('tags').value = 'test, demo, button';
+            
+            console.log('Test values set, submitting form...');
+            
+            // Trigger form submission
+            const form = document.getElementById('createEventForm');
+            const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+            form.dispatchEvent(submitEvent);
+        }
+        
+        // Test function to verify modal visibility
+        function testModal() {
+            console.log('Testing modal visibility...');
+            
+            const modal = document.getElementById('createEventModal');
+            if (modal) {
+                console.log('Modal found:', modal);
+                console.log('Modal classes:', modal.className);
+                console.log('Modal style:', modal.style.display);
+                
+                // Try to show the modal
+                modal.classList.add('active');
+                console.log('Modal classes after adding active:', modal.className);
+                
+                // Check if it's visible
+                const isVisible = modal.classList.contains('active');
+                console.log('Modal is visible:', isVisible);
+                
+                if (isVisible) {
+                    showToast('Modal is now visible!', 'success');
+                } else {
+                    showToast('Modal failed to show', 'error');
+                }
+            } else {
+                console.error('Modal not found!');
+                showToast('Modal not found!', 'error');
+            }
+        }
+        
+        // Set default form values for testing
+        function setDefaultFormValues() {
+            console.log('Setting default form values...');
+            
+            try {
+                const now = new Date();
+                const futureDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+                const deadlineDate = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000); // 5 days from now
+                
+                // Format dates for datetime-local input
+                const formatDate = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                };
+                
+                // Set default values
+                const eventName = document.getElementById('eventName');
+                const description = document.getElementById('description');
+                const eventDate = document.getElementById('eventDate');
+                const capacity = document.getElementById('capacity');
+                const location = document.getElementById('location');
+                const organizer = document.getElementById('organizer');
+                const organizerEmail = document.getElementById('organizerEmail');
+                const registrationDeadline = document.getElementById('registrationDeadline');
+                const tags = document.getElementById('tags');
+                
+                if (eventName) eventName.value = '';
+                if (description) description.value = '';
+                if (eventDate) eventDate.value = formatDate(futureDate);
+                if (capacity) capacity.value = '50';
+                if (location) location.value = '';
+                if (organizer) organizer.value = currentUser ? currentUser.name : 'Admin User';
+                if (organizerEmail) organizerEmail.value = currentUser ? currentUser.email : 'admin@university.edu';
+                if (registrationDeadline) registrationDeadline.value = formatDate(deadlineDate);
+                if (tags) tags.value = 'Technology, Workshop, Conference';
+                
+                console.log('Default values set successfully');
+            } catch (error) {
+                console.error('Error setting default values:', error);
+            }
         }
 
         // Close modal
@@ -579,62 +1003,6 @@
             document.getElementById('createEventForm').reset();
         }
 
-        // Handle create event form
-        document.getElementById('createEventForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                eventName: document.getElementById('eventName').value,
-                description: document.getElementById('description').value,
-                date: document.getElementById('eventDate').value,
-                capacity: parseInt(document.getElementById('capacity').value),
-                location: document.getElementById('location').value,
-                organizer: document.getElementById('organizer').value,
-                organizerEmail: document.getElementById('organizerEmail').value,
-                registrationDeadline: document.getElementById('registrationDeadline').value,
-                tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
-            };
-            
-            const createBtn = document.getElementById('createEventForm').querySelector('button[type="submit"]');
-            const createText = document.getElementById('createEventText');
-            const createSpinner = document.getElementById('createEventSpinner');
-            
-            // Show loading state
-            createBtn.disabled = true;
-            createText.classList.add('hidden');
-            createSpinner.classList.remove('hidden');
-            
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${API_BASE_URL}/events`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showToast('Event created successfully!', 'success');
-                    closeModal();
-                    loadEvents();
-                    loadDashboard();
-                } else {
-                    showToast(data.message || 'Failed to create event', 'error');
-                }
-            } catch (error) {
-                console.error('Error creating event:', error);
-                showToast('Error creating event', 'error');
-            } finally {
-                // Hide loading state
-                createBtn.disabled = false;
-                createText.classList.remove('hidden');
-                createSpinner.classList.add('hidden');
-            }
-        });
 
         // View event details
         async function viewEventDetails(eventId) {
@@ -754,6 +1122,42 @@
             window.location.href = 'index.html';
         }
 
+        // Validation helper functions
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function showFieldError(field, message) {
+            // Remove existing error
+            const existingError = field.parentNode.querySelector('.field-error');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Add error styling
+            field.classList.add('border-red-400');
+            field.classList.remove('border-white/20');
+            
+            // Add error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error text-red-400 text-xs mt-1';
+            errorDiv.textContent = message;
+            field.parentNode.appendChild(errorDiv);
+        }
+        
+        function clearValidationErrors() {
+            const form = document.getElementById('createEventForm');
+            const fields = form.querySelectorAll('.form-input');
+            fields.forEach(field => {
+                field.classList.remove('border-red-400');
+                field.classList.add('border-white/20');
+            });
+            
+            const errors = form.querySelectorAll('.field-error');
+            errors.forEach(error => error.remove());
+        }
+
         // Show toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
@@ -777,4 +1181,4 @@
         }
     </script>
 </body>
-</html>
+</html> 

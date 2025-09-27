@@ -84,7 +84,7 @@ router.get('/', async (req, res) => {
         const skip = (page - 1) * limit;
 
         // Build query
-        let query = { isActive: true };
+        let query = {};
         
         // Filter by registration status
         if (status === 'open') {
@@ -106,20 +106,24 @@ router.get('/', async (req, res) => {
             ];
         }
 
+        console.log('Query:', query);
         const events = await Event.find(query)
             .populate('participants.studentId', 'name email')
             .populate('waitingList.studentId', 'name email')
             .sort({ date: 1 })
             .skip(skip)
             .limit(parseInt(limit));
+        
+        console.log('Found events:', events.length);
 
         // Add virtual fields to response
         const eventsWithVirtuals = events.map(event => {
-            const eventObj = event.toObject();
+            const eventObj = event.toObject({ virtuals: true });
             eventObj.availableSeats = event.availableSeats;
             eventObj.registrationStatus = event.registrationStatus;
             eventObj.participantCount = event.participants.filter(p => p.status === 'registered').length;
             eventObj.waitingListCount = event.waitingList.length;
+            eventObj.registeredCount = event.participants.filter(p => p.status === 'registered').length;
             return eventObj;
         });
 

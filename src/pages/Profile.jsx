@@ -1,20 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useUser } from '../context/UserContext';
 
 const Profile = () => {
-  const { user, updateProfile, availableSkills } = useUser();
+  const [user, setUser] = useState(null);
+  const [registeredEvents, setRegisteredEvents] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    location: user?.location || '',
-    skillsOffered: user?.skillsOffered || [],
-    skillsWanted: user?.skillsWanted || [],
-    availability: user?.availability || 'Weekends',
-    isPublic: user?.isPublic || true
+    name: '',
+    email: '',
+    year: '',
+    department: '',
+    bio: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  // Load user data and events
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Redirect to login if no token
+        window.location.href = '/login';
+        return;
+      }
+
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setUser(data.data);
+        setRegisteredEvents(data.data.registeredEvents || []);
+        setFormData({
+          name: data.data.name || '',
+          email: data.data.email || '',
+          year: data.data.year || '',
+          department: data.data.department || '',
+          bio: data.data.bio || ''
+        });
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      setMessage('Error loading profile data');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,23 +57,29 @@ const Profile = () => {
     setMessage('');
 
     try {
-      updateProfile(formData);
-      setMessage('Profile updated successfully!');
-      setIsEditing(false);
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setUser(data.data);
+        setMessage('Profile updated successfully!');
+        setIsEditing(false);
+      } else {
+        setMessage('Failed to update profile');
+      }
     } catch (error) {
       setMessage('Failed to update profile');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleSkillChange = (skill, type) => {
-    setFormData(prev => ({
-      ...prev,
-      [type]: prev[type].includes(skill)
-        ? prev[type].filter(s => s !== skill)
-        : [...prev[type], skill]
-    }));
   };
 
   if (!user) {
@@ -62,8 +103,8 @@ const Profile = () => {
         >
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
-            <p className="text-gray-600">Manage your profile and skills</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile - Event Registration</h1>
+            <p className="text-gray-600">Manage your event registrations and profile information</p>
           </div>
 
           {/* Profile Card */}
@@ -120,15 +161,14 @@ const Profile = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Location
+                    Email
                   </label>
                   <input
-                    type="text"
-                    value={formData.location}
-                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     className="input-field"
                     disabled={!isEditing}
-                    placeholder="City, State/Country"
                   />
                 </div>
               </div>
@@ -136,111 +176,95 @@ const Profile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Availability
+                    Year of Study
                   </label>
                   <select
-                    value={formData.availability}
-                    onChange={(e) => setFormData(prev => ({ ...prev, availability: e.target.value }))}
+                    value={formData.year}
+                    onChange={(e) => setFormData(prev => ({ ...prev, year: e.target.value }))}
                     className="input-field"
                     disabled={!isEditing}
                   >
-                    <option value="Weekends">Weekends</option>
-                    <option value="Evenings">Evenings</option>
-                    <option value="Weekdays">Weekdays</option>
-                    <option value="Flexible">Flexible</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="Graduate">Graduate</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Profile Visibility
+                    Department
                   </label>
-                  <div className="flex items-center space-x-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        checked={formData.isPublic}
-                        onChange={() => setFormData(prev => ({ ...prev, isPublic: true }))}
-                        disabled={!isEditing}
-                        className="mr-2"
-                      />
-                      <span className="text-sm text-gray-700">Public</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        checked={!formData.isPublic}
-                        onChange={() => setFormData(prev => ({ ...prev, isPublic: false }))}
-                        disabled={!isEditing}
-                        className="mr-2"
-                      />
-                      <span className="text-sm text-gray-700">Private</span>
-                    </label>
-                  </div>
+                  <input
+                    type="text"
+                    value={formData.department}
+                    onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
+                    className="input-field"
+                    disabled={!isEditing}
+                    placeholder="e.g., Computer Science"
+                  />
                 </div>
               </div>
 
-              {/* Skills Section */}
-              {isEditing && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bio
+                </label>
+                <textarea
+                  value={formData.bio}
+                  onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                  className="input-field"
+                  disabled={!isEditing}
+                  rows={4}
+                  placeholder="Tell us about yourself and your interests in events..."
+                />
+              </div>
+
+              {/* Event Registration Information */}
+              {!isEditing && (
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Skills You Can Offer
-                    </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      {availableSkills.map((skill) => (
-                        <label key={skill} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={formData.skillsOffered.includes(skill)}
-                            onChange={() => handleSkillChange(skill, 'skillsOffered')}
-                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                          />
-                          <span className="text-sm text-gray-700">{skill}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Skills You Want to Learn
-                    </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      {availableSkills.map((skill) => (
-                        <label key={skill} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={formData.skillsWanted.includes(skill)}
-                            onChange={() => handleSkillChange(skill, 'skillsWanted')}
-                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                          />
-                          <span className="text-sm text-gray-700">{skill}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Current Skills Display */}
-              {!isEditing && (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Skills You Can Offer</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {user.skillsOffered.map((skill, index) => (
-                        <span key={index} className="skill-tag">{skill}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Skills You Want to Learn</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {user.skillsWanted.map((skill, index) => (
-                        <span key={index} className="skill-tag-wanted">{skill}</span>
-                      ))}
-                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">My Registered Events</h3>
+                    {registeredEvents.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>You have not registered for any events yet.</p>
+                        <p className="text-sm mt-2">Browse available events to get started!</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {registeredEvents.map((event, index) => {
+                          const statusClass = event.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                                            event.status === 'waiting' ? 'bg-yellow-100 text-yellow-800' : 
+                                            'bg-gray-100 text-gray-800';
+                          const statusText = event.status === 'confirmed' ? 'Confirmed' : 
+                                           event.status === 'waiting' ? 'Waiting List' : 'Pending';
+                          
+                          return (
+                            <div key={index} className="border border-gray-200 rounded-lg p-4">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4 className="font-medium text-gray-900">{event.eventName}</h4>
+                                  <p className="text-sm text-gray-600">
+                                    {new Date(event.date).toLocaleDateString()} • {event.location || 'TBA'}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    {event.availableSeats} of {event.capacity} seats available
+                                    {event.seatNumber && ` • Seat #${event.seatNumber}`}
+                                  </p>
+                                  <p className="text-xs text-gray-400">
+                                    Registered: {new Date(event.registrationDate).toLocaleString()}
+                                  </p>
+                                </div>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusClass}`}>
+                                  {statusText}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -256,12 +280,11 @@ const Profile = () => {
                       onClick={() => {
                         setIsEditing(false);
                         setFormData({
-                          name: user.name,
-                          location: user.location,
-                          skillsOffered: user.skillsOffered,
-                          skillsWanted: user.skillsWanted,
-                          availability: user.availability,
-                          isPublic: user.isPublic
+                          name: user.name || '',
+                          email: user.email || '',
+                          year: user.year || '',
+                          department: user.department || '',
+                          bio: user.bio || ''
                         });
                       }}
                       className="btn-secondary"
