@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const Student = require('../models/Student');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -15,35 +15,50 @@ const protect = async (req, res, next) => {
             // Verify token
             const decoded = jwt.verify(token, JWT_SECRET);
 
-            // Get user from token
-            req.user = await User.findById(decoded.id).select('-password');
+            // Get student from token
+            req.student = await Student.findById(decoded.id).select('-password');
 
-            if (!req.user) {
-                return res.status(401).json({ error: 'User not found' });
+            if (!req.student) {
+                return res.status(401).json({ 
+                    success: false,
+                    message: 'Student not found' 
+                });
             }
 
-            if (req.user.isBanned) {
-                return res.status(403).json({ error: 'Account has been banned' });
+            if (!req.student.isActive) {
+                return res.status(403).json({ 
+                    success: false,
+                    message: 'Account has been deactivated' 
+                });
             }
 
             next();
         } catch (error) {
             console.error('Token verification error:', error);
-            return res.status(401).json({ error: 'Not authorized, token failed' });
+            return res.status(401).json({ 
+                success: false,
+                message: 'Not authorized, token failed' 
+            });
         }
     }
 
     if (!token) {
-        return res.status(401).json({ error: 'Not authorized, no token' });
+        return res.status(401).json({ 
+            success: false,
+            message: 'Not authorized, no token' 
+        });
     }
 };
 
 // Admin middleware - require admin privileges
 const admin = (req, res, next) => {
-    if (req.user && req.user.isAdmin) {
+    if (req.student && req.student.isAdmin) {
         next();
     } else {
-        return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
+        return res.status(403).json({ 
+            success: false,
+            message: 'Access denied. Admin privileges required.' 
+        });
     }
 };
 

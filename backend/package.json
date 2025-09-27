@@ -1,21 +1,23 @@
 {
-  "name": "skillswap-backend",
+  "name": "event-registration-backend",
   "version": "1.0.0",
-  "description": "Backend API for Skill Swap Platform",
+  "description": "Backend API for Event Registration with Limited Capacity",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "seed": "node seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "skill-swap",
+    "event-registration",
     "api",
     "nodejs",
     "express",
-    "mongodb"
+    "mongodb",
+    "capacity-management"
   ],
-  "author": "Skill Swap Team",
+  "author": "Event Registration Team",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -23,7 +25,8 @@
     "dotenv": "^17.2.0",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.3"
+    "mongoose": "^8.16.3",
+    "nodemailer": "^6.9.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

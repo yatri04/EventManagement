@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+
+        .neon-text {
+            text-shadow: 
+                0 0 10px rgba(0, 212, 255, 0.8),
+                0 0 20px rgba(0, 212, 255, 0.6),
+                0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .cyber-button {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s ease;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-8">
+                <div class="orbitron text-2xl font-bold neon-text">
+                    <span class="text-cyan-400">Event</span><span class="text-pink-400">Registration</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-6">
+                    <a href="index.html" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">Home</a>
+                    <a href="admin-panel.html" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">Admin Panel</a>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4" id="navAuth">
+                <!-- This will be populated by JavaScript -->
+            </div>
+            
+            <div class="flex items-center space-x-4" id="navGuest" style="display: none;">
+                <a href="login.html" class="cyber-button text-sm">Login</a>
+                <a href="register.html" class="glass px-6 py-2 rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 font-medium">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-24 pb-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="orbitron text-4xl font-bold text-white mb-4 neon-text">
+                    <span class="text-cyan-400">Admin</span> <span class="text-pink-400">Panel</span>
+                </h1>
+                <p class="text-white/60 text-lg">Manage users and monitor skill swap requests</p>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+                <div class="admin-card text-center">
+                    <div class="text-3xl font-bold text-cyan-400 mb-2" id="totalUsers">0</div>
+                    <div class="text-white/60">Total Users</div>
+                </div>
+                <div class="admin-card text-center">
+                    <div class="text-3xl font-bold text-green-400 mb-2" id="onlineUsers">0</div>
+                    <div class="text-white/60">Online Users</div>
+                </div>
+                <div class="admin-card text-center">
+                    <div class="text-3xl font-bold text-pink-400 mb-2" id="totalSwaps">0</div>
+                    <div class="text-white/60">Total Swaps</div>
+                </div>
+                <div class="admin-card text-center">
+                    <div class="text-3xl font-bold text-yellow-400 mb-2" id="pendingSwaps">0</div>
+                    <div class="text-white/60">Pending Swaps</div>
+                </div>
+                <div class="admin-card text-center">
+                    <div class="text-3xl font-bold text-blue-400 mb-2" id="completedSwaps">0</div>
+                    <div class="text-white/60">Completed Swaps</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="glass rounded-3xl p-8">
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <button class="tab-button active" onclick="switchTab('users')">Users Management</button>
+                    <button class="tab-button" onclick="switchTab('swaps')">Swap Requests</button>
+                </div>
+
+                <!-- Users Tab -->
+                <div id="usersTab" class="tab-content active">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-white">
+                            <thead>
+                                <tr class="border-b border-white/20">
+                                    <th class="text-left py-4 px-6">User</th>
+                                    <th class="text-left py-4 px-6">Title</th>
+                                    <th class="text-left py-4 px-6">Skills</th>
+                                    <th class="text-left py-4 px-6">Status</th>
+                                    <th class="text-left py-4 px-6">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- Users will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Swaps Tab -->
+                <div id="swapsTab" class="tab-content">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-white">
+                            <thead>
+                                <tr class="border-b border-white/20">
+                                    <th class="text-left py-4 px-6">From User</th>
+                                    <th class="text-left py-4 px-6">To User</th>
+                                    <th class="text-left py-4 px-6">Skills</th>
+                                    <th class="text-left py-4 px-6">Status</th>
+                                    <th class="text-left py-4 px-6">Date</th>
+                                    <th class="text-left py-4 px-6">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="swapTableBody">
+                                <!-- Swap requests will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth status check
+        function checkAuthStatus() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const navAuth = document.getElementById('navAuth');
+            const navGuest = document.getElementById('navGuest');
+            
+            if (currentUser && currentUser.isLoggedIn) {
+                navGuest.style.display = 'none';
+                navAuth.style.display = 'block';
+                
+                const avatarStyle = currentUser.photoData ? 
+                    `style="background-image: url(${currentUser.photoData}); background-size: cover; background-position: center;"` : '';
+                
+                navAuth.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm navbar-avatar" ${avatarStyle}>
+                            ${currentUser.photoData ? '' : currentUser.avatar}
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-white text-sm font-semibold">${currentUser.firstName}</span>
+                            <span class="text-cyan-400 text-xs">${currentUser.availability || 'Available'}</span>
+                        </div>
+                        <button onclick="logout()" class="cyber-button text-xs px-3 py-1">Logout</button>
+                        <a href="my-profile.html" class="cyber-button text-xs px-3 py-1" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">My Profile</a>
+                        <a href="index.html" class="cyber-button text-xs px-3 py-1" style="background: linear-gradient(45deg, #666, #999);">Home</a>
+                    </div>
+                `;
+            } else {
+                navAuth.style.display = 'none';
+                navGuest.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        // Admin Panel Data Management
+        let users = [];
+        let swapRequests = [];
+        
+        function loadAdminData() {
+            // Load current user
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                users = [currentUser];
+            }
+            
+            // Load swap requests
+            swapRequests = JSON.parse(localStorage.getItem('swapRequests')) || [];
+            
+            // Add sample users
+            const sampleUsers = [
+                {
+                    id: 'user_1',
+                    firstName: 'Archi',
+                    lastName: 'Mandani',
+                    email: 'archi@example.com',
+                    avatar: 'AM',
+                    title: 'Full Stack Developer',
+                    skillsOffered: ['React', 'Node.js', 'Python', 'AWS'],
+                    skillsWanted: ['UI/UX Design', 'Mobile Dev'],
+                    availability: 'available',
+                    rating: 4.8,
+                    reviews: 95,
+                    isLoggedIn: false
+                },
+                {
+                    id: 'user_2',
+                    firstName: 'Juli',
+                    lastName: 'Kyada',
+                    email: 'juli@example.com',
+                    avatar: 'JK',
+                    title: 'UI/UX Designer',
+                    skillsOffered: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
+                    skillsWanted: ['Frontend Dev', 'Animation'],
+                    availability: 'busy',
+                    rating: 4.7,
+                    reviews: 78,
+                    isLoggedIn: false
+                },
+                {
+                    id: 'user_3',
+                    firstName: 'Darshika',
+                    lastName: 'Dhudhat',
+                    email: 'darshika@example.com',
+                    avatar: 'DD',
+                    title: 'Data Scientist',
+                    skillsOffered: ['Python', 'Machine Learning', 'SQL', 'TensorFlow'],
+                    skillsWanted: ['Web Development', 'DevOps'],
+                    availability: 'available',
+                    rating: 4.9,
+                    reviews: 156,
+                    isLoggedIn: false
+                }
+            ];
+            
+            users = [...users, ...sampleUsers];
+            
+            displayUsers();
+            displaySwapRequests();
+            updateDashboardStats();
+        }
+        
+        function displayUsers() {
+            const userTableBody = document.getElementById('userTableBody');
+            userTableBody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-white/5 transition-colors';
+                
+                const statusClass = user.isLoggedIn ? 'text-green-400' : 'text-red-400';
+                const statusText = user.isLoggedIn ? '🟢 Online' : '🔴 Offline';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm mr-3">
+                                ${user.avatar}
+                            </div>
+                            <div>
+                                <div class="text-white font-semibold">${user.firstName} ${user.lastName}</div>
+                                <div class="text-gray-400 text-sm">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-white">${user.title || 'Skill Swapper'}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-wrap gap-1">
+                            ${(user.skillsOffered || []).slice(0, 3).map(skill => 
+                                `<span class="px-2 py-1 bg-cyan-500/20 text-cyan-400 text-xs rounded">${skill}</span>`
+                            ).join('')}
+                            ${(user.skillsOffered || []).length > 3 ? 
+                                `<span class="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs rounded">+${(user.skillsOffered || []).length - 3}</span>` : ''
+                            }
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="viewUser('${user.id}')" class="px-3 py-1 bg-cyan-500 text-white rounded text-sm hover:bg-cyan-600 transition-colors">
+                                View
+                            </button>
+                            <button onclick="editUser('${user.id}')" class="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition-colors">
+                                Edit
+                            </button>
+                            <button onclick="deleteUser('${user.id}')" class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                userTableBody.appendChild(row);
+            });
+        }
+        
+        function displaySwapRequests() {
+            const swapTableBody = document.getElementById('swapTableBody');
+            swapTableBody.innerHTML = '';
+            
+            if (swapRequests.length === 0) {
+                swapTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                            No swap requests found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            swapRequests.forEach(request => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-white/5 transition-colors';
+                
+                const statusClass = getStatusClass(request.status);
+                const statusText = getStatusText(request.status);
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="text-white font-semibold">${request.fromUser.name}</div>
+                        <div class="text-gray-400 text-sm">${request.fromUser.email}</div>
+                    </div>
+                    <td class="px-6 py-4">
+                        <div class="text-white font-semibold">${request.toUser.name}</div>
+                        <div class="text-gray-400 text-sm">${request.toUser.email}</div>
+                    </div>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-300">
+                            <div><strong>From:</strong> ${request.fromUserSkills.join(', ')}</div>
+                            <div><strong>To:</strong> ${request.toUserSkills.join(', ')}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400 text-sm">
+                        ${new Date(request.requestDate).toLocaleDateString()}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-2">
+                            ${request.status === 'pending' ? `
+                                <button onclick="updateSwapStatus('${request.id}', 'accepted')" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors">
+                                    Accept
+                                </button>
+                                <button onclick="updateSwapStatus('${request.id}', 'rejected')" class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors">
+                                    Reject
+                                </button>
+                            ` : ''}
+                            <button onclick="viewSwapDetails('${request.id}')" class="px-3 py-1 bg-cyan-500 text-white rounded text-sm hover:bg-cyan-600 transition-colors">
+                                Details
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                swapTableBody.appendChild(row);
+            });
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'pending': return 'text-yellow-400';
+                case 'accepted': return 'text-green-400';
+                case 'rejected': return 'text-red-400';
+                case 'completed': return 'text-blue-400';
+                default: return 'text-gray-400';
+            }
+        }
+        
+        function getStatusText(status) {
+            switch(status) {
+                case 'pending': return '⏳ Pending';
+                case 'accepted': return '✅ Accepted';
+                case 'rejected': return '❌ Rejected';
+                case 'completed': return '🎉 Completed';
+                default: return '❓ Unknown';
+            }
+        }
+        
+        function updateSwapStatus(requestId, newStatus) {
+            const requestIndex = swapRequests.findIndex(req => req.id == requestId);
+            if (requestIndex !== -1) {
+                swapRequests[requestIndex].status = newStatus;
+                localStorage.setItem('swapRequests', JSON.stringify(swapRequests));
+                displaySwapRequests();
+                updateDashboardStats();
+                
+                alert(`Swap request ${newStatus}!`);
+            }
+        }
+        
+        function updateDashboardStats() {
+            const totalUsers = users.length;
+            const onlineUsers = users.filter(user => user.isLoggedIn).length;
+            const totalSwaps = swapRequests.length;
+            const pendingSwaps = swapRequests.filter(req => req.status === 'pending').length;
+            const completedSwaps = swapRequests.filter(req => req.status === 'completed').length;
+            
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('onlineUsers').textContent = onlineUsers;
+            document.getElementById('totalSwaps').textContent = totalSwaps;
+            document.getElementById('pendingSwaps').textContent = pendingSwaps;
+            document.getElementById('completedSwaps').textContent = completedSwaps;
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+        }
+        
+        function viewUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const userData = encodeURIComponent(JSON.stringify(user));
+                window.location.href = `user-profile.html?user=${userData}`;
+            }
+        }
+        
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                const newName = prompt(`Edit name for ${user.firstName} ${user.lastName}:`, `${user.firstName} ${user.lastName}`);
+                if (newName) {
+                    const [firstName, ...lastNameParts] = newName.split(' ');
+                    const lastName = lastNameParts.join(' ');
+                    user.firstName = firstName;
+                    user.lastName = lastName;
+                    displayUsers();
+                }
+            }
+        }
+        
+        function deleteUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user && confirm(`Are you sure you want to delete ${user.firstName} ${user.lastName}?`)) {
+                users = users.filter(u => u.id !== userId);
+                displayUsers();
+                updateDashboardStats();
+            }
+        }
+        
+        function viewSwapDetails(requestId) {
+            const request = swapRequests.find(req => req.id == requestId);
+            if (request) {
+                const details = `
+Swap Request Details:
+From: ${request.fromUser.name} (${request.fromUser.email})
+To: ${request.toUser.name} (${request.toUser.email})
+Status: ${request.status}
+Date: ${new Date(request.requestDate).toLocaleString()}
+From Skills: ${request.fromUserSkills.join(', ')}
+To Skills: ${request.toUserSkills.join(', ')}
+                `;
+                alert(details);
+            }
+        }
+        
+        // Initialize
+        checkAuthStatus();
+        loadAdminData();
+    </script>
+</body>
+</html> 

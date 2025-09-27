@@ -1,24 +1,24 @@
-# Skill Swap Platform - Backend API
+# Event Registration Backend API
 
-A complete backend API for the Skill Swap Platform built with Node.js, Express, and MongoDB.
+A Node.js backend API for managing event registrations with limited capacity, waiting lists, and admin functionality.
 
-## 🚀 Features
+## Features
 
-- **User Authentication**: JWT-based authentication with bcrypt password hashing
-- **User Management**: Registration, login, profile management, and skill management
-- **Skill Swapping**: Create, accept, reject, and complete skill exchange requests
-- **Notifications**: Real-time notifications for users
-- **Admin Panel**: Complete admin functionality for platform management
-- **Search & Discovery**: Advanced user and skill search capabilities
-- **Rating System**: User rating and feedback system
+- **Event Management**: Create, read, update, and delete events with capacity limits
+- **Student Registration**: Students can register for events until capacity is reached
+- **Waiting List**: Automatic waiting list management when events are full
+- **Admin Panel**: Comprehensive admin dashboard for managing events and participants
+- **Email Notifications**: Automatic email confirmations for registrations
+- **Authentication**: JWT-based authentication for students and admins
+- **MongoDB Integration**: Scalable database with Mongoose ODM
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js (v14 or higher)
-- MongoDB Atlas account
-- npm or yarn
+- MongoDB Atlas account or local MongoDB instance
+- npm or yarn package manager
 
-## 🛠️ Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -32,160 +32,260 @@ A complete backend API for the Skill Swap Platform built with Node.js, Express, 
    ```
 
 3. **Environment Setup**
-   Create a `.env` file in the root directory:
+   Create a `.env` file in the backend directory:
    ```env
+   # MongoDB Connection
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/event-registration?retryWrites=true&w=majority
+   
+   # JWT Secret
+   JWT_SECRET=your-super-secret-jwt-key-change-in-production
+   
+   # Email Configuration (Optional)
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_PASS=your-app-password
+   
+   # Server Configuration
    PORT=5000
    NODE_ENV=development
-   MONGODB_URI=mongodb+srv://23ce027:xZl2I1siCBjJFxKv@cluster0.3j72tt9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-   CORS_ORIGIN=http://localhost:8000
    ```
 
-4. **Start the server**
+4. **MongoDB Atlas Setup**
+   - Create a MongoDB Atlas account at [mongodb.com](https://www.mongodb.com/atlas)
+   - Create a new cluster
+   - Create a database user with read/write permissions
+   - Whitelist your IP address
+   - Get your connection string and update `MONGODB_URI` in `.env`
+
+5. **Seed the database** (Optional)
    ```bash
-   # Development mode
-   npm run dev
-   
-   # Production mode
-   npm start
+   npm run seed
    ```
+   This will create sample events and admin/student accounts.
 
-## 📚 API Endpoints
+## API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user profile
-- `PUT /api/auth/profile` - Update user profile
+- `POST /api/auth/register` - Register a new student
+- `POST /api/auth/login` - Login student
+- `GET /api/auth/me` - Get current student profile
+- `PUT /api/auth/profile` - Update student profile
 - `PUT /api/auth/change-password` - Change password
 
-### Users
-- `GET /api/users` - Get all users (with pagination and filtering)
-- `GET /api/users/:id` - Get user by ID
-- `PUT /api/users/skills` - Update user skills
-- `GET /api/users/search/:skill` - Search users by skill
-- `GET /api/users/recommendations` - Get recommended users
-- `PUT /api/users/availability` - Update user availability
+### Events
+- `GET /api/events` - Get all events (with pagination and filtering)
+- `GET /api/events/:id` - Get single event by ID
+- `POST /api/events` - Create new event (Admin only)
+- `PUT /api/events/:id` - Update event (Admin only)
+- `DELETE /api/events/:id` - Delete event (Admin only)
 
-### Skills
-- `GET /api/skills` - Get all available skills
-- `GET /api/skills/popular` - Get popular skills
-- `GET /api/skills/search/:query` - Search skills
-- `GET /api/skills/categories` - Get skill categories
+### Registration
+- `POST /api/register` - Register for an event
+- `DELETE /api/register/:eventId` - Cancel event registration
+- `GET /api/register/my-events` - Get student's registered events
+- `GET /api/register/event/:eventId/status` - Check registration status
 
-### Swaps
-- `POST /api/swaps` - Create a new swap request
-- `GET /api/swaps` - Get user's swaps
-- `GET /api/swaps/:id` - Get swap by ID
-- `PUT /api/swaps/:id/accept` - Accept swap request
-- `PUT /api/swaps/:id/reject` - Reject swap request
-- `PUT /api/swaps/:id/cancel` - Cancel swap request
-- `PUT /api/swaps/:id/complete` - Complete swap
-- `POST /api/swaps/:id/rate` - Rate completed swap
+### Admin
+- `GET /api/admin/events` - Get all events for admin dashboard
+- `GET /api/admin/events/:id/participants` - Get event participants and waiting list
+- `GET /api/admin/students` - Get all students
+- `GET /api/admin/dashboard` - Get admin dashboard statistics
 
-### Notifications
-- `GET /api/notifications` - Get user notifications
-- `PUT /api/notifications/:id/read` - Mark notification as read
-- `PUT /api/notifications/read-all` - Mark all notifications as read
-- `DELETE /api/notifications/:id` - Delete notification
-- `GET /api/notifications/unread-count` - Get unread count
+## Data Models
 
-### Admin (Admin only)
-- `GET /api/admin/dashboard` - Get admin dashboard stats
-- `GET /api/admin/users` - Get all users (admin view)
-- `PUT /api/admin/users/:id/ban` - Ban/Unban user
-- `GET /api/admin/swaps` - Get all swaps (admin view)
-- `PUT /api/admin/swaps/:id/notes` - Add admin notes to swap
-- `POST /api/admin/notifications/global` - Create global notification
-- `GET /api/admin/stats` - Get platform statistics
-- `GET /api/admin/export/:type` - Export data
-
-## 🗄️ Database Models
-
-### User Model
-- Basic info: name, email, password, profile image, location, bio
-- Skills: offering and seeking skills with levels
-- Availability settings
-- Rating system
-- Admin and ban status
-
-### Swap Model
-- Requester and recipient
-- Skills being exchanged
-- Status tracking (pending, accepted, rejected, completed, cancelled)
-- Scheduling and completion dates
-- Rating system for both parties
-
-### Notification Model
-- Recipient and type
-- Related swap or user
-- Read status and priority
-- Global notifications support
-
-## 🔐 Authentication
-
-The API uses JWT (JSON Web Tokens) for authentication. Include the token in the Authorization header:
-
-```
-Authorization: Bearer <your-jwt-token>
+### Event Schema
+```javascript
+{
+  eventName: String (required),
+  description: String,
+  date: Date (required),
+  capacity: Number (required),
+  location: String,
+  organizer: String (required),
+  organizerEmail: String (required),
+  participants: [{
+    studentId: ObjectId,
+    registeredAt: Date,
+    status: String
+  }],
+  waitingList: [{
+    studentId: ObjectId,
+    addedAt: Date,
+    position: Number
+  }],
+  isActive: Boolean,
+  registrationDeadline: Date,
+  tags: [String]
+}
 ```
 
-## 🚦 Error Handling
+### Student Schema
+```javascript
+{
+  name: String (required),
+  email: String (required, unique),
+  password: String (required),
+  studentId: String (unique),
+  phone: String,
+  department: String,
+  year: String,
+  profileImage: String,
+  bio: String,
+  registeredEvents: [{
+    eventId: ObjectId,
+    registeredAt: Date,
+    status: String
+  }],
+  isAdmin: Boolean,
+  isActive: Boolean
+}
+```
+
+## Usage Examples
+
+### Register a Student
+```javascript
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@university.edu",
+  "password": "password123",
+  "studentId": "STU001",
+  "phone": "+1234567890",
+  "department": "Computer Science",
+  "year": "3rd Year",
+  "bio": "Passionate about web development"
+}
+```
+
+### Create an Event (Admin)
+```javascript
+POST /api/events
+Authorization: Bearer <admin-token>
+Content-Type: application/json
+
+{
+  "eventName": "Tech Conference 2024",
+  "description": "Annual technology conference",
+  "date": "2024-03-15T09:00:00Z",
+  "capacity": 150,
+  "location": "Convention Center",
+  "organizer": "Tech Society",
+  "organizerEmail": "events@techsociety.org",
+  "registrationDeadline": "2024-03-10T23:59:59Z",
+  "tags": ["Technology", "Conference", "Networking"]
+}
+```
+
+### Register for an Event
+```javascript
+POST /api/register
+Authorization: Bearer <student-token>
+Content-Type: application/json
+
+{
+  "eventId": "event-id-here"
+}
+```
+
+## Error Handling
 
 The API returns consistent error responses:
 
-```json
+```javascript
 {
-  "error": "Error message",
-  "message": "Detailed error description"
+  "success": false,
+  "message": "Error description",
+  "error": "Detailed error message"
 }
 ```
 
-## 📊 Response Format
+Common HTTP status codes:
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized
+- `403` - Forbidden
+- `404` - Not Found
+- `500` - Internal Server Error
 
-Successful responses follow this format:
+## Email Configuration
 
-```json
-{
-  "data": "Response data",
-  "pagination": {
-    "currentPage": 1,
-    "totalPages": 10,
-    "totalItems": 100,
-    "hasNext": true,
-    "hasPrev": false
-  }
-}
+To enable email notifications, configure your email settings in the `.env` file:
+
+```env
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
 ```
 
-## 🛡️ Security Features
+For Gmail, you'll need to:
+1. Enable 2-factor authentication
+2. Generate an App Password
+3. Use the App Password in `EMAIL_PASS`
 
-- Password hashing with bcrypt
-- JWT token authentication
-- CORS protection
-- Input validation and sanitization
-- Rate limiting (can be added)
-- Admin role verification
+## Development
 
-## 🧪 Testing
-
+### Running in Development Mode
 ```bash
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
+npm run dev
 ```
 
-## 📦 Deployment
+### Running in Production Mode
+```bash
+npm start
+```
 
-1. Set environment variables for production
-2. Update CORS origin to your frontend domain
-3. Use a strong JWT secret
-4. Enable MongoDB Atlas security features
-5. Deploy to your preferred platform (Heroku, Vercel, AWS, etc.)
+### Database Seeding
+```bash
+npm run seed
+```
 
-## 🤝 Contributing
+## Testing the API
+
+You can test the API using tools like:
+- Postman
+- Insomnia
+- curl
+- Thunder Client (VS Code extension)
+
+### Sample Test Requests
+
+1. **Health Check**
+   ```bash
+   curl http://localhost:5000/api/health
+   ```
+
+2. **Register a Student**
+   ```bash
+   curl -X POST http://localhost:5000/api/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"name":"Test User","email":"test@university.edu","password":"password123","studentId":"TEST001"}'
+   ```
+
+3. **Login**
+   ```bash
+   curl -X POST http://localhost:5000/api/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test@university.edu","password":"password123"}'
+   ```
+
+## Deployment
+
+### Environment Variables for Production
+- Set `NODE_ENV=production`
+- Use a strong, unique `JWT_SECRET`
+- Use a secure MongoDB connection string
+- Configure proper email settings
+
+### Recommended Hosting Platforms
+- Heroku
+- DigitalOcean
+- AWS
+- Google Cloud Platform
+- Vercel (for serverless)
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -193,10 +293,24 @@ npm run test:watch
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the ISC License.
 
-## 🆘 Support
+## Support
 
-For support, email support@skillswap.com or create an issue in the repository. 
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
+
+## Changelog
+
+### Version 1.0.0
+- Initial release
+- Event management with capacity limits
+- Student registration system
+- Waiting list functionality
+- Admin dashboard
+- Email notifications
+- JWT authentication

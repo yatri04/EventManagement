@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillSwap - Revolutionary Skill Exchange Platform</title>
+    <title>Event Registration - Limited Capacity Events</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
         
@@ -186,6 +187,14 @@
             box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
         }
 
+        .cyber-button.success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .cyber-button.danger {
+            background: linear-gradient(45deg, #dc3545, #ff6b6b);
+        }
+
         /* Search Bar */
         .search-container {
             position: relative;
@@ -320,7 +329,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-4">
                 <div class="orbitron text-2xl font-bold neon-text">
-                    <span class="text-cyan-400">Skill</span><span class="text-pink-400">Swap</span>
+                    <span class="text-cyan-400">Event</span><span class="text-pink-400">Registration</span>
                 </div>
                 <div class="hidden md:flex space-x-6">
                     <a href="#" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">Home</a>
@@ -330,7 +339,12 @@
             </div>
             
             <div class="flex items-center space-x-4" id="navAuth">
-                <!-- This will be populated by JavaScript -->
+                <a href="login.html" class="cyber-button">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                </a>
+                <a href="register.html" class="cyber-button success">
+                    <i class="fas fa-user-plus mr-2"></i>Register
+                </a>
             </div>
         </div>
     </nav>
@@ -339,12 +353,12 @@
     <section class="relative min-h-screen flex items-center justify-center px-4">
         <div class="text-center z-10">
             <h1 class="hero-title orbitron text-6xl md:text-8xl font-black mb-8 neon-text">
-                <span class="text-cyan-400">Revolutionary</span><br>
-                <span class="text-pink-400">Skill Exchange</span>
+                <span class="text-cyan-400">Event</span><br>
+                <span class="text-pink-400">Registration</span>
             </h1>
             <p class="text-xl md:text-2xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-                Experience the future of knowledge sharing with our cutting-edge platform. 
-                Connect, learn, and grow through innovative skill swapping technology.
+                Discover and register for exciting events with limited capacity. 
+                Join workshops, conferences, and seminars that match your interests.
             </p>
             <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
                 <button class="cyber-button pulse-glow text-lg px-8 py-4">
@@ -362,32 +376,32 @@
         <div class="max-w-6xl mx-auto">
             <div class="glass rounded-3xl p-8 mb-12">
                 <div class="search-container mb-8">
-                    <input type="text" placeholder="Search for skills, users, or expertise..." class="search-input">
+                    <input type="text" placeholder="Search for events, topics, or organizers..." class="search-input">
                 </div>
                 
                 <div class="flex flex-wrap gap-4 justify-center">
-                    <div class="filter-pill active">All Skills</div>
+                    <div class="filter-pill active">All Events</div>
                     <div class="filter-pill">Technology</div>
-                    <div class="filter-pill">Design</div>
-                    <div class="filter-pill">Business</div>
-                    <div class="filter-pill">Creative</div>
-                    <div class="filter-pill">Languages</div>
-                    <div class="filter-pill">Music</div>
-                    <div class="filter-pill">Sports</div>
+                    <div class="filter-pill">Workshop</div>
+                    <div class="filter-pill">Conference</div>
+                    <div class="filter-pill">Seminar</div>
+                    <div class="filter-pill">Networking</div>
+                    <div class="filter-pill">Training</div>
+                    <div class="filter-pill">Bootcamp</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Users Grid -->
+    <!-- Events Grid -->
     <section class="relative py-20 px-4">
         <div class="max-w-7xl mx-auto">
             <h2 class="orbitron text-4xl font-bold text-center mb-16 neon-text">
-                <span class="text-cyan-400">Featured</span> <span class="text-pink-400">Skill Masters</span>
+                <span class="text-cyan-400">Upcoming</span> <span class="text-pink-400">Events</span>
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="userGrid">
-                <!-- User cards will be dynamically generated here -->
+                <!-- Event cards will be dynamically generated here -->
             </div>
         </div>
     </section>
@@ -416,10 +430,10 @@
     <footer class="glass-dark mt-20 py-12 px-4">
         <div class="max-w-6xl mx-auto text-center">
             <div class="orbitron text-2xl font-bold neon-text mb-6">
-                <span class="text-cyan-400">Skill</span><span class="text-pink-400">Swap</span>
+                <span class="text-cyan-400">Event</span><span class="text-pink-400">Registration</span>
             </div>
             <p class="text-white/60 mb-8">
-                Revolutionizing the way people connect and share knowledge through innovative technology.
+                Connecting students with exciting events and learning opportunities through our innovative platform.
             </p>
             <div class="flex justify-center space-x-6 text-white/60">
                 <a href="#" class="hover:text-cyan-400 transition-colors">Privacy</a>
@@ -545,266 +559,14 @@
             }, 1000);
         });
         
-        // Filter functionality
-        document.querySelectorAll('.filter-pill').forEach(pill => {
-            pill.addEventListener('click', function() {
-                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Add animation effect
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-            });
-        });
-        
-        // Search functionality
-        const searchInput = document.querySelector('.search-input');
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const userCards = document.querySelectorAll('.user-card');
-            
-            userCards.forEach(card => {
-                const userName = card.querySelector('h3').textContent.toLowerCase();
-                const userSkills = Array.from(card.querySelectorAll('.skill-tag')).map(tag => tag.textContent.toLowerCase());
-                
-                const matches = userName.includes(searchTerm) || userSkills.some(skill => skill.includes(searchTerm));
-                
-                if (matches || searchTerm === '') {
-                    card.style.display = 'block';
-                    card.style.animation = 'fadeIn 0.5s ease-in-out';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-        
-        // Add fadeIn animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-        `;
-        document.head.appendChild(style);
-        
         // Window resize handler
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
-
-        // User Authentication Management
-        function checkAuthStatus() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const navAuth = document.getElementById('navAuth');
-            
-            if (currentUser && currentUser.isLoggedIn) {
-                // User is logged in - show profile and logout
-                const avatarStyle = currentUser.photoData ? 
-                    `style="background-image: url(${currentUser.photoData}); background-size: cover; background-position: center;"` : '';
-                
-                navAuth.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <div class="relative group">
-                            <button onclick="toggleProfileMenu()" class="flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm" ${avatarStyle}>
-                                    ${currentUser.photoData ? '' : currentUser.avatar}
-                                </div>
-                                <span class="hidden md:block">${currentUser.firstName}</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                                <a href="my-profile.html" class="block px-4 py-2 text-white hover:bg-white/10 transition-colors">My Profile</a>
-                                <a href="#" class="block px-4 py-2 text-white hover:bg-white/10 transition-colors">Settings</a>
-                                <hr class="border-white/20">
-                                <button onclick="logout()" class="block w-full text-left px-4 py-2 text-red-400 hover:bg-white/10 transition-colors">Logout</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                // User is not logged in - show login and register
-                navAuth.innerHTML = `
-                    <a href="login.html" class="cyber-button text-sm">Login</a>
-                    <a href="register.html" class="glass px-6 py-2 rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 font-medium">Register</a>
-                `;
-            }
-        }
-
-        function toggleProfileMenu() {
-            const menu = document.getElementById('profileMenu');
-            menu.classList.toggle('opacity-0');
-            menu.classList.toggle('invisible');
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
-            checkAuthStatus();
-            window.location.reload();
-        }
-
-        // User data for dynamic generation
-        const users = [
-            {
-                firstName: 'Archi',
-                lastName: 'Mandani',
-                avatar: 'AM',
-                title: 'Full Stack Developer',
-                skillsOffered: ['React', 'Node.js', 'Python', 'AWS'],
-                skillsWanted: ['UI/UX Design', 'Mobile Dev'],
-                availability: 'available',
-                bio: 'Passionate full-stack developer with expertise in modern web technologies.',
-                avatarBg: 'from-cyan-400 to-pink-400',
-                titleColor: 'text-cyan-400'
-            },
-            {
-                firstName: 'Juli',
-                lastName: 'Kyada',
-                avatar: 'JK',
-                title: 'UI/UX Designer',
-                skillsOffered: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
-                skillsWanted: ['Frontend Dev', 'Animation'],
-                availability: 'busy',
-                bio: 'Creative UI/UX designer focused on creating beautiful and functional user experiences.',
-                avatarBg: 'from-purple-400 to-yellow-400',
-                titleColor: 'text-pink-400'
-            },
-            {
-                firstName: 'Darshika',
-                lastName: 'Dhudhat',
-                avatar: 'DD',
-                title: 'Data Scientist',
-                skillsOffered: ['Python', 'Machine Learning', 'SQL', 'TensorFlow'],
-                skillsWanted: ['Web Development', 'DevOps'],
-                availability: 'available',
-                bio: 'Data scientist passionate about extracting insights from complex datasets.',
-                avatarBg: 'from-green-400 to-blue-400',
-                titleColor: 'text-green-400'
-            },
-            {
-                firstName: 'Nyuti',
-                lastName: 'Bhesania',
-                avatar: 'NB',
-                title: 'Digital Marketing',
-                skillsOffered: ['SEO', 'Social Media', 'Google Ads', 'Analytics'],
-                skillsWanted: ['Content Creation', 'Video Editing'],
-                availability: 'available',
-                bio: 'Digital marketing expert helping businesses grow their online presence.',
-                avatarBg: 'from-red-400 to-orange-400',
-                titleColor: 'text-orange-400'
-            },
-            {
-                firstName: 'Khushi',
-                lastName: 'Donga',
-                avatar: 'KD',
-                title: 'UI/UX Designer',
-                skillsOffered: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
-                skillsWanted: ['Frontend Dev', 'Animation'],
-                availability: 'busy',
-                bio: 'Creative designer with a passion for user-centered design solutions.',
-                avatarBg: 'from-purple-400 to-yellow-400',
-                titleColor: 'text-pink-400'
-            },
-            {
-                firstName: 'Dishva',
-                lastName: 'Vasoya',
-                avatar: 'DV',
-                title: 'Mobile Developer',
-                skillsOffered: ['React Native', 'Flutter', 'iOS', 'Android'],
-                skillsWanted: ['Backend Dev', 'UI Design'],
-                availability: 'offline',
-                bio: 'Mobile app developer creating innovative solutions for iOS and Android.',
-                avatarBg: 'from-indigo-400 to-purple-400',
-                titleColor: 'text-indigo-400'
-            }
-        ];
-
-        function loadUserGrid() {
-            const userGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-8');
-            if (!userGrid) return;
-            
-            userGrid.innerHTML = '';
-            
-            users.forEach((user, index) => {
-                const userCard = document.createElement('div');
-                userCard.className = 'user-card float';
-                userCard.style.animationDelay = `${index * 0.5}s`;
-                
-                const userData = encodeURIComponent(JSON.stringify(user));
-                
-                userCard.innerHTML = `
-                    <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 rounded-full bg-gradient-to-r ${user.avatarBg} flex items-center justify-center text-white font-bold text-xl mr-4">
-                            ${user.avatar}
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">${user.firstName} ${user.lastName}</h3>
-                            <p class="${user.titleColor}">${user.title}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h4 class="text-white font-semibold mb-3">Skills Offered:</h4>
-                        <div class="flex flex-wrap gap-2">
-                            ${user.skillsOffered.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <h4 class="text-white font-semibold mb-3">Skills Wanted:</h4>
-                        <div class="flex flex-wrap gap-2">
-                            ${user.skillsWanted.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-between items-center">
-                        <span class="${getAvailabilityColor(user.availability)} text-sm">${getAvailabilityIcon(user.availability)} ${getAvailabilityText(user.availability)}</span>
-                        <a href="user-profile.html?user=${userData}" class="cyber-button text-sm">View Profile</a>
-                    </div>
-                `;
-                
-                userGrid.appendChild(userCard);
-            });
-        }
-
-        function getAvailabilityColor(availability) {
-            switch(availability) {
-                case 'available': return 'text-green-400';
-                case 'busy': return 'text-yellow-400';
-                case 'limited': return 'text-orange-400';
-                case 'offline': return 'text-red-400';
-                default: return 'text-gray-400';
-            }
-        }
-
-        function getAvailabilityIcon(availability) {
-            switch(availability) {
-                case 'available': return '🟢';
-                case 'busy': return '🟡';
-                case 'limited': return '🟠';
-                case 'offline': return '🔴';
-                default: return '⚪';
-            }
-        }
-
-        function getAvailabilityText(availability) {
-            switch(availability) {
-                case 'available': return 'Available';
-                case 'busy': return 'Busy';
-                case 'limited': return 'Limited';
-                case 'offline': return 'Offline';
-                default: return 'Unknown';
-            }
-        }
-
-        // Initialize auth status on page load
-        checkAuthStatus();
-        loadUserGrid();
     </script>
+    
+    <!-- Event Registration System -->
+    <script src="event-registration.js"></script>
 </body>
 </html> 

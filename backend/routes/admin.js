@@ -1,329 +1,344 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-const Swap = require('../models/Swap');
-const Notification = require('../models/Notification');
-const { protect, admin } = require('../middleware/auth');
+const Event = require('../models/Event');
+const Student = require('../models/Student');
+const { protect: auth } = require('../middleware/auth');
 
-// All routes require admin privileges
-router.use(protect, admin);
-
-// @desc    Get admin dashboard stats
-// @route   GET /api/admin/dashboard
-// @access  Private/Admin
-router.get('/dashboard', async (req, res) => {
+// @route   GET /api/admin/events/:id/participants
+// @desc    Get participants and waiting list for an event
+// @access  Admin only
+router.get('/events/:id/participants', auth, async (req, res) => {
     try {
-        const totalUsers = await User.countDocuments();
-        const activeUsers = await User.countDocuments({ isBanned: false });
-        const bannedUsers = await User.countDocuments({ isBanned: true });
-        
-        const totalSwaps = await Swap.countDocuments();
-        const pendingSwaps = await Swap.countDocuments({ status: 'pending' });
-        const completedSwaps = await Swap.countDocuments({ status: 'completed' });
-        
-        const totalNotifications = await Notification.countDocuments();
-        const unreadNotifications = await Notification.countDocuments({ isRead: false });
+        // Check if user is admin
+        if (!req.student.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Access denied. Admin privileges required.' 
+            });
+        }
 
-        // Recent activity
-        const recentUsers = await User.find()
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .select('name email createdAt');
+        const event = await Event.findById(req.params.id)
+            .populate('participants.studentId', 'name email studentId department year phone')
+            .populate('waitingList.studentId', 'name email studentId department year phone');
 
-        const recentSwaps = await Swap.find()
-            .populate('requester', 'name')
-            .populate('recipient', 'name')
-            .sort({ createdAt: -1 })
-            .limit(5);
+        if (!event) {
+            return res.status(404).json({
+                success: false,
+                message: 'Event not found'
+            });
+        }
+
+        // Separate registered participants and cancelled ones
+        const registeredParticipants = event.participants
+            .filter(p => p.status === 'registered')
+            .map(p => ({
+                studentId: p.studentId._id,
+                name: p.studentId.name,
+                email: p.studentId.email,
+                studentIdNumber: p.studentId.studentId,
+                department: p.studentId.department,
+                year: p.studentId.year,
+                phone: p.studentId.phone,
+                registeredAt: p.registeredAt
+            }));
+
+        const cancelledParticipants = event.participants
+            .filter(p => p.status === 'cancelled')
+            .map(p => ({
+                studentId: p.studentId._id,
+                name: p.studentId.name,
+                email: p.studentId.email,
+                studentIdNumber: p.studentId.studentId,
+                department: p.studentId.department,
+                year: p.studentId.year,
+                phone: p.studentId.phone,
+                registeredAt: p.registeredAt
+            }));
+
+        const waitingList = event.waitingList.map(w => ({
+            studentId: w.studentId._id,
+            name: w.studentId.name,
+            email: w.studentId.email,
+            studentIdNumber: w.studentId.studentId,
+            department: w.studentId.department,
+            year: w.studentId.year,
+            phone: w.studentId.phone,
+            position: w.position,
+            addedAt: w.addedAt
+        }));
 
         res.json({
-            stats: {
-                users: { total: totalUsers, active: activeUsers, banned: bannedUsers },
-                swaps: { total: totalSwaps, pending: pendingSwaps, completed: completedSwaps },
-                notifications: { total: totalNotifications, unread: unreadNotifications }
-            },
-            recentActivity: {
-                users: recentUsers,
-                swaps: recentSwaps
+            success: true,
+            data: {
+                event: {
+                    id: event._id,
+                    eventName: event.eventName,
+                    date: event.date,
+                    capacity: event.capacity,
+                    location: event.location,
+                    organizer: event.organizer
+                },
+                participants: {
+                    registered: registeredParticipants,
+                    cancelled: cancelledParticipants,
+                    totalRegistered: registeredParticipants.length,
+                    totalCancelled: cancelledParticipants.length
+                },
+                waitingList: {
+                    students: waitingList,
+                    totalWaiting: waitingList.length
+                },
+                summary: {
+                    totalCapacity: event.capacity,
+                    registeredCount: registeredParticipants.length,
+                    availableSeats: event.capacity - registeredParticipants.length,
+                    waitingListCount: waitingList.length,
+                    registrationStatus: event.registrationStatus
+                }
             }
         });
+
     } catch (error) {
-        console.error('Dashboard error:', error);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error fetching event participants:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching event participants',
+            error: error.message
+        });
     }
 });
 
-// @desc    Get all users (admin view)
-// @route   GET /api/admin/users
-// @access  Private/Admin
-router.get('/users', async (req, res) => {
+// @route   GET /api/admin/events
+// @desc    Get all events for admin dashboard
+// @access  Admin only
+router.get('/events', auth, async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
-        const search = req.query.search;
-        const status = req.query.status; // 'active', 'banned', 'all'
+        // Check if user is admin
+        if (!req.student.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Access denied. Admin privileges required.' 
+            });
+        }
 
+        const { page = 1, limit = 10, status = 'all' } = req.query;
+        const skip = (page - 1) * limit;
+
+        // Build query
+        let query = {};
+
+        if (status === 'active') {
+            query.isActive = true;
+        } else if (status === 'inactive') {
+            query.isActive = false;
+        }
+
+        const events = await Event.find(query)
+            .populate('participants.studentId', 'name email')
+            .populate('waitingList.studentId', 'name email')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
+
+        // Add virtual fields and statistics
+        const eventsWithStats = events.map(event => {
+            const eventObj = event.toObject();
+            const registeredCount = event.participants.filter(p => p.status === 'registered').length;
+            const cancelledCount = event.participants.filter(p => p.status === 'cancelled').length;
+            
+            eventObj.availableSeats = event.availableSeats;
+            eventObj.registrationStatus = event.registrationStatus;
+            eventObj.registeredCount = registeredCount;
+            eventObj.cancelledCount = cancelledCount;
+            eventObj.waitingListCount = event.waitingList.length;
+            eventObj.occupancyRate = Math.round((registeredCount / event.capacity) * 100);
+            
+            return eventObj;
+        });
+
+        const total = await Event.countDocuments(query);
+
+        res.json({
+            success: true,
+            data: {
+                events: eventsWithStats,
+            pagination: {
+                    currentPage: parseInt(page),
+                totalPages: Math.ceil(total / limit),
+                    totalEvents: total,
+                    hasNext: page < Math.ceil(total / limit),
+                hasPrev: page > 1
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching admin events:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching events',
+            error: error.message
+        });
+    }
+});
+
+// @route   GET /api/admin/students
+// @desc    Get all students for admin management
+// @access  Admin only
+router.get('/students', auth, async (req, res) => {
+    try {
+        // Check if user is admin
+        if (!req.student.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Access denied. Admin privileges required.' 
+            });
+        }
+
+        const { page = 1, limit = 10, search = '' } = req.query;
+        const skip = (page - 1) * limit;
+
+        // Build query
         let query = {};
 
         if (search) {
             query.$or = [
                 { name: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } }
+                { email: { $regex: search, $options: 'i' } },
+                { studentId: { $regex: search, $options: 'i' } },
+                { department: { $regex: search, $options: 'i' } }
             ];
         }
 
-        if (status === 'banned') {
-            query.isBanned = true;
-        } else if (status === 'active') {
-            query.isBanned = false;
-        }
-
-        const users = await User.find(query)
+        const students = await Student.find(query)
+            .populate('registeredEvents.eventId', 'eventName date')
             .select('-password')
             .sort({ createdAt: -1 })
-            .limit(limit)
-            .skip((page - 1) * limit);
+            .skip(skip)
+            .limit(parseInt(limit));
 
-        const total = await User.countDocuments(query);
+        // Add registration count
+        const studentsWithStats = students.map(student => {
+            const studentObj = student.toObject();
+            studentObj.registeredEventsCount = student.registeredEvents.filter(reg => reg.status === 'registered').length;
+            return studentObj;
+        });
+
+        const total = await Student.countDocuments(query);
 
         res.json({
-            users,
+            success: true,
+            data: {
+                students: studentsWithStats,
             pagination: {
-                currentPage: page,
+                    currentPage: parseInt(page),
                 totalPages: Math.ceil(total / limit),
-                totalUsers: total,
-                hasNext: page * limit < total,
+                    totalStudents: total,
+                    hasNext: page < Math.ceil(total / limit),
                 hasPrev: page > 1
+                }
             }
         });
+
     } catch (error) {
-        console.error('Get users error:', error);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error fetching students:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching students',
+            error: error.message
+        });
     }
 });
 
-// @desc    Ban/Unban user
-// @route   PUT /api/admin/users/:id/ban
-// @access  Private/Admin
-router.put('/users/:id/ban', async (req, res) => {
+// @route   GET /api/admin/dashboard
+// @desc    Get admin dashboard statistics
+// @access  Admin only
+router.get('/dashboard', auth, async (req, res) => {
     try {
-        const { isBanned, reason } = req.body;
-        const user = await User.findById(req.params.id);
-
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        user.isBanned = isBanned;
-        await user.save();
-
-        // Create notification for user
-        if (isBanned) {
-            await Notification.create({
-                recipient: user._id,
-                type: 'account_banned',
-                title: 'Account Banned',
-                message: `Your account has been banned. Reason: ${reason || 'Violation of platform rules'}`,
-                priority: 'urgent'
+        // Check if user is admin
+        if (!req.student.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Access denied. Admin privileges required.' 
             });
         }
 
-        res.json({ message: `User ${isBanned ? 'banned' : 'unbanned'} successfully` });
-    } catch (error) {
-        console.error('Ban user error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
+        // Get statistics
+        const totalEvents = await Event.countDocuments();
+        const activeEvents = await Event.countDocuments({ isActive: true });
+        const totalStudents = await Student.countDocuments();
+        const activeStudents = await Student.countDocuments({ isActive: true });
 
-// @desc    Get all swaps (admin view)
-// @route   GET /api/admin/swaps
-// @access  Private/Admin
-router.get('/swaps', async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
-        const status = req.query.status;
+        // Get upcoming events
+        const upcomingEvents = await Event.find({
+            date: { $gt: new Date() },
+            isActive: true
+        })
+        .populate('participants.studentId', 'name')
+        .sort({ date: 1 })
+        .limit(5);
 
-        let query = {};
-
-        if (status) {
-            query.status = status;
-        }
-
-        const swaps = await Swap.find(query)
-            .populate('requester', 'name email')
-            .populate('recipient', 'name email')
-            .sort({ createdAt: -1 })
-            .limit(limit)
-            .skip((page - 1) * limit);
-
-        const total = await Swap.countDocuments(query);
-
-        res.json({
-            swaps,
-            pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
-                totalSwaps: total,
-                hasNext: page * limit < total,
-                hasPrev: page > 1
-            }
-        });
-    } catch (error) {
-        console.error('Get swaps error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// @desc    Add admin notes to swap
-// @route   PUT /api/admin/swaps/:id/notes
-// @access  Private/Admin
-router.put('/swaps/:id/notes', async (req, res) => {
-    try {
-        const { adminNotes } = req.body;
-        const swap = await Swap.findById(req.params.id);
-
-        if (!swap) {
-            return res.status(404).json({ error: 'Swap not found' });
-        }
-
-        swap.adminNotes = adminNotes;
-        await swap.save();
-
-        res.json({ message: 'Admin notes updated successfully' });
-    } catch (error) {
-        console.error('Update swap notes error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// @desc    Create global notification
-// @route   POST /api/admin/notifications/global
-// @access  Private/Admin
-router.post('/notifications/global', async (req, res) => {
-    try {
-        const { title, message, priority } = req.body;
-
-        const notification = await Notification.createGlobalNotification(title, message, priority);
-
-        res.status(201).json(notification);
-    } catch (error) {
-        console.error('Create global notification error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// @desc    Get platform statistics
-// @route   GET /api/admin/stats
-// @access  Private/Admin
-router.get('/stats', async (req, res) => {
-    try {
-        // User statistics
-        const userStats = await User.aggregate([
+        // Get recent registrations
+        const recentRegistrations = await Event.aggregate([
+            { $unwind: '$participants' },
+            { $match: { 'participants.status': 'registered' } },
+            { $sort: { 'participants.registeredAt': -1 } },
+            { $limit: 10 },
             {
-                $group: {
-                    _id: null,
-                    totalUsers: { $sum: 1 },
-                    activeUsers: { $sum: { $cond: [{ $eq: ['$isBanned', false] }, 1, 0] } },
-                    bannedUsers: { $sum: { $cond: [{ $eq: ['$isBanned', true] }, 1, 0] } },
-                    avgRating: { $avg: '$rating' }
-                }
-            }
-        ]);
-
-        // Swap statistics
-        const swapStats = await Swap.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    totalSwaps: { $sum: 1 },
-                    pendingSwaps: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
-                    acceptedSwaps: { $sum: { $cond: [{ $eq: ['$status', 'accepted'] }, 1, 0] } },
-                    completedSwaps: { $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] } },
-                    rejectedSwaps: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } }
-                }
-            }
-        ]);
-
-        // Monthly user registrations
-        const monthlyRegistrations = await User.aggregate([
-            {
-                $group: {
-                    _id: {
-                        year: { $year: '$createdAt' },
-                        month: { $month: '$createdAt' }
-                    },
-                    count: { $sum: 1 }
+                $lookup: {
+                    from: 'students',
+                    localField: 'participants.studentId',
+                    foreignField: '_id',
+                    as: 'student'
                 }
             },
-            { $sort: { '_id.year': -1, '_id.month': -1 } },
-            { $limit: 12 }
-        ]);
-
-        // Popular skills
-        const popularSkills = await User.aggregate([
-            { $unwind: '$skillsOffering' },
-            { $group: { _id: '$skillsOffering.name', count: { $sum: 1 } } },
-            { $sort: { count: -1 } },
-            { $limit: 10 }
+            {
+                $lookup: {
+                    from: 'events',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'event'
+                }
+            },
+            {
+                $project: {
+                    studentName: { $arrayElemAt: ['$student.name', 0] },
+                    studentEmail: { $arrayElemAt: ['$student.email', 0] },
+                    eventName: { $arrayElemAt: ['$event.eventName', 0] },
+                    eventDate: { $arrayElemAt: ['$event.date', 0] },
+                    registeredAt: '$participants.registeredAt'
+                }
+            }
         ]);
 
         res.json({
-            users: userStats[0] || {},
-            swaps: swapStats[0] || {},
-            monthlyRegistrations,
-            popularSkills
+            success: true,
+            data: {
+                statistics: {
+                    totalEvents,
+                    activeEvents,
+                    totalStudents,
+                    activeStudents
+                },
+                upcomingEvents: upcomingEvents.map(event => ({
+                    id: event._id,
+                    eventName: event.eventName,
+                    date: event.date,
+                    capacity: event.capacity,
+                    registeredCount: event.participants.filter(p => p.status === 'registered').length,
+                    availableSeats: event.availableSeats
+                })),
+                recentRegistrations
+            }
         });
+
     } catch (error) {
-        console.error('Get stats error:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// @desc    Export data
-// @route   GET /api/admin/export/:type
-// @access  Private/Admin
-router.get('/export/:type', async (req, res) => {
-    try {
-        const { type } = req.params;
-        const { format = 'json' } = req.query;
-
-        let data;
-        let filename;
-
-        switch (type) {
-            case 'users':
-                data = await User.find().select('-password');
-                filename = 'users-export';
-                break;
-            case 'swaps':
-                data = await Swap.find()
-                    .populate('requester', 'name email')
-                    .populate('recipient', 'name email');
-                filename = 'swaps-export';
-                break;
-            case 'notifications':
-                data = await Notification.find()
-                    .populate('recipient', 'name email');
-                filename = 'notifications-export';
-                break;
-            default:
-                return res.status(400).json({ error: 'Invalid export type' });
-        }
-
-        if (format === 'csv') {
-            // Simple CSV conversion (you might want to use a library like 'json2csv')
-            res.setHeader('Content-Type', 'text/csv');
-            res.setHeader('Content-Disposition', `attachment; filename="${filename}.csv"`);
-            res.send(JSON.stringify(data));
-        } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.setHeader('Content-Disposition', `attachment; filename="${filename}.json"`);
-            res.json(data);
-        }
-    } catch (error) {
-        console.error('Export error:', error);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error fetching dashboard data:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching dashboard data',
+            error: error.message
+        });
     }
 });
 
