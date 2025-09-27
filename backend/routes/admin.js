@@ -133,30 +133,55 @@ router.get('/events', auth, async (req, res) => {
             query.isActive = false;
         }
 
-        const events = await Event.find(query)
-            .populate('participants.studentId', 'name email')
-            .populate('waitingList.studentId', 'name email')
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(parseInt(limit));
+        let events = [];
+        try {
+            events = await Event.find(query)
+                .populate('participants.studentId', 'name email')
+                .populate('waitingList.studentId', 'name email')
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit))
+                .lean();
+        } catch (dbError) {
+            console.error('Database error in admin events:', dbError);
+            events = [];
+        }
 
         // Add virtual fields and statistics
         const eventsWithStats = events.map(event => {
-            const eventObj = event.toObject();
             const registeredCount = event.participants.filter(p => p.status === 'registered').length;
             const cancelledCount = event.participants.filter(p => p.status === 'cancelled').length;
+            const availableSeats = event.capacity - registeredCount;
             
-            eventObj.availableSeats = event.availableSeats;
-            eventObj.registrationStatus = event.registrationStatus;
-            eventObj.registeredCount = registeredCount;
-            eventObj.cancelledCount = cancelledCount;
-            eventObj.waitingListCount = event.waitingList.length;
-            eventObj.occupancyRate = Math.round((registeredCount / event.capacity) * 100);
+            // Calculate registration status
+            const now = new Date();
+            let registrationStatus = 'open';
+            if (event.registrationDeadline && now > event.registrationDeadline) {
+                registrationStatus = 'closed';
+            } else if (availableSeats <= 0) {
+                registrationStatus = 'full';
+            } else if (now > event.date) {
+                registrationStatus = 'past';
+            }
             
-            return eventObj;
+            return {
+                ...event,
+                availableSeats,
+                registrationStatus,
+                registeredCount,
+                cancelledCount,
+                waitingListCount: event.waitingList.length,
+                occupancyRate: Math.round((registeredCount / event.capacity) * 100)
+            };
         });
 
-        const total = await Event.countDocuments(query);
+        let total = 0;
+        try {
+            total = await Event.countDocuments(query);
+        } catch (dbError) {
+            console.error('Database error in event count:', dbError);
+            total = 0;
+        }
 
         res.json({
             success: true,
@@ -236,7 +261,7 @@ router.get('/students', auth, async (req, res) => {
                     totalStudents: total,
                     hasNext: page < Math.ceil(total / limit),
                 hasPrev: page > 1
-                }
+            }
             }
         });
 
@@ -264,22 +289,46 @@ router.get('/dashboard', auth, async (req, res) => {
         }
 
         // Get statistics
-        const totalEvents = await Event.countDocuments();
-        const activeEvents = await Event.countDocuments({ isActive: true });
-        const totalStudents = await Student.countDocuments();
-        const activeStudents = await Student.countDocuments({ isActive: true });
+        let totalEvents, activeEvents, totalStudents, activeStudents, totalRegistrations;
+        try {
+            totalEvents = await Event.countDocuments();
+            activeEvents = await Event.countDocuments({ isActive: true });
+            totalStudents = await Student.countDocuments();
+            activeStudents = await Student.countDocuments({ isActive: true });
+            
+            // Calculate total registrations across all events
+            const events = await Event.find({ isActive: true });
+            totalRegistrations = events.reduce((total, event) => {
+                return total + event.participants.filter(p => p.status === 'registered').length;
+            }, 0);
+        } catch (dbError) {
+            console.error('Database error in dashboard stats:', dbError);
+            totalEvents = 0;
+            activeEvents = 0;
+            totalStudents = 0;
+            activeStudents = 0;
+            totalRegistrations = 0;
+        }
 
         // Get upcoming events
-        const upcomingEvents = await Event.find({
-            date: { $gt: new Date() },
-            isActive: true
-        })
-        .populate('participants.studentId', 'name')
-        .sort({ date: 1 })
-        .limit(5);
+        let upcomingEvents = [];
+        try {
+            upcomingEvents = await Event.find({
+                date: { $gt: new Date() },
+                isActive: true
+            })
+            .populate('participants.studentId', 'name')
+            .sort({ date: 1 })
+            .limit(5);
+        } catch (dbError) {
+            console.error('Database error in upcoming events:', dbError);
+            upcomingEvents = [];
+        }
 
         // Get recent registrations
-        const recentRegistrations = await Event.aggregate([
+        let recentRegistrations = [];
+        try {
+            recentRegistrations = await Event.aggregate([
             { $unwind: '$participants' },
             { $match: { 'participants.status': 'registered' } },
             { $sort: { 'participants.registeredAt': -1 } },
@@ -310,6 +359,10 @@ router.get('/dashboard', auth, async (req, res) => {
                 }
             }
         ]);
+        } catch (dbError) {
+            console.error('Database error in recent registrations:', dbError);
+            recentRegistrations = [];
+        }
 
         res.json({
             success: true,
@@ -318,7 +371,8 @@ router.get('/dashboard', auth, async (req, res) => {
                     totalEvents,
                     activeEvents,
                     totalStudents,
-                    activeStudents
+                    activeStudents,
+                    totalRegistrations
                 },
                 upcomingEvents: upcomingEvents.map(event => ({
                     id: event._id,

@@ -48,7 +48,7 @@ const Navbar = () => {
               <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center mr-2">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">SkillSwap</span>
+              <span className="text-xl font-bold text-gray-900">Event Registration</span>
               {isAdmin && (
                 <span className="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
                   Admin

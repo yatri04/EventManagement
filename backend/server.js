@@ -14,14 +14,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://23ce027:xZl2I1siCBjJFxKv@cluster0.3j72tt9.mongodb.net/event-registration?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://aesha:aesha2006@cluster0.x3hcqaj.mongodb.net/event-registration?retryWrites=true&w=majority&appName=Cluster0';
 
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 10000,
+    socketTimeoutMS: 45000
+})
 .then(() => {
     console.log('✅ Connected to MongoDB successfully');
 })
 .catch((error) => {
     console.error('❌ MongoDB connection error:', error);
+    // Don't exit the process, continue without MongoDB for testing
 });
 
 // Import routes
