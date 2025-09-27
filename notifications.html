@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Skillswap</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="notifications-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Skillswap</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Discover</a>
+                <a href="profile.html" class="nav-link">My Skills</a>
+                <a href="messages.html" class="nav-link">Messages</a>
+                <a href="notifications.html" class="nav-link active">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </a>
+                <div class="nav-profile">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notifications Container -->
+    <div class="notifications-container">
+        <div class="container">
+            <!-- Header -->
+            <div class="notifications-header">
+                <div class="header-content">
+                    <h1>Notifications</h1>
+                    <p>Stay updated with your skill swap activities</p>
+                </div>
+                <div class="header-actions">
+                    <button class="mark-all-read-btn" id="markAllReadBtn">
+                        <i class="fas fa-check-double"></i>
+                        Mark All Read
+                    </button>
+                    <button class="clear-all-btn" id="clearAllBtn">
+                        <i class="fas fa-trash"></i>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all" id="allTab">
+                    <span class="tab-count">12</span>
+                    All
+                </button>
+                <button class="filter-tab" data-filter="requests" id="requestsTab">
+                    <span class="tab-count">3</span>
+                    Requests
+                </button>
+                <button class="filter-tab" data-filter="messages" id="messagesTab">
+                    <span class="tab-count">5</span>
+                    Messages
+                </button>
+                <button class="filter-tab" data-filter="connections" id="connectionsTab">
+                    <span class="tab-count">2</span>
+                    Connections
+                </button>
+                <button class="filter-tab" data-filter="skills" id="skillsTab">
+                    <span class="tab-count">2</span>
+                    Skills
+                </button>
+            </div>
+
+            <!-- Notifications List -->
+            <div class="notifications-list" id="notificationsList">
+                <!-- Notifications will be populated here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-bell-slash"></i>
+                </div>
+                <h3>No notifications</h3>
+                <p>You're all caught up! Check back later for new updates.</p>
+                <button class="refresh-btn" onclick="refreshNotifications()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more-container" id="loadMoreContainer">
+                <button class="load-more-btn" id="loadMoreBtn">
+                    <span>Load More</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Detail Modal -->
+    <div class="modal" id="notificationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Notification Details</h3>
+                <button class="modal-close" onclick="closeNotificationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated here -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <!-- Modal actions will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Notification Settings</h3>
+                <button class="modal-close" onclick="closeSettingsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h4>Email Notifications</h4>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span>New skill swap requests</span>
+                            <p>Get notified when someone wants to swap skills with you</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailRequests" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span>New messages</span>
+                            <p>Receive email notifications for new messages</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailMessages" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span>Connection updates</span>
+                            <p>Get notified about new connections and profile updates</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailConnections">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Push Notifications</h4>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span>Real-time notifications</span>
+                            <p>Receive instant push notifications in your browser</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="pushNotifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Frequency</h4>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span>Digest emails</span>
+                            <p>Receive a daily summary of all notifications</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="digestEmails">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveNotificationSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
+        </div>
+    </div>
+
+    <script src="data-manager.js"></script>
+    <script src="notifications.js"></script>
+</body>
+</html> 

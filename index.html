@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Revolutionary Skill Exchange Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            border-radius: 10px;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Neon Effects */
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8), 0 0 20px rgba(0, 212, 255, 0.6);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.8), 0 0 60px rgba(0, 212, 255, 0.4); }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Matrix Rain Effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Holographic Effect */
+        .holographic {
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(0, 212, 255, 0.2) 25%, 
+                rgba(255, 107, 107, 0.2) 50%, 
+                rgba(138, 43, 226, 0.2) 75%, 
+                rgba(255, 255, 255, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: holographic-shift 3s ease-in-out infinite;
+        }
+
+        @keyframes holographic-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Morphing Shapes */
+        .morph-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: morph 8s ease-in-out infinite;
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 50%; transform: scale(1) rotate(0deg); }
+            25% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: scale(1.2) rotate(90deg); }
+            50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; transform: scale(0.8) rotate(180deg); }
+            75% { border-radius: 30% 70% 70% 30% / 70% 30% 30% 70%; transform: scale(1.1) rotate(270deg); }
+        }
+
+        /* Skill Card Hover Effects */
+        .skill-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px) rotateX(10deg) rotateY(10deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Particle System */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Custom Button */
+        .cyber-button {
+            position: relative;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 5px;
+            backdrop-filter: blur(20px);
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Filter Pills */
+        .filter-pill {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-pill:hover, .filter-pill.active {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        /* User Card */
+        .user-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .user-card:hover::before {
+            left: 100%;
+        }
+
+        .user-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        /* Skill Tags */
+        .skill-tag {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+            display: inline-block;
+            animation: skill-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes skill-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .user-card {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Background -->
+    <canvas id="matrixCanvas" class="matrix-bg"></canvas>
+    
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Morphing Shapes -->
+    <div class="morph-shape" style="width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="morph-shape" style="width: 200px; height: 200px; top: 60%; right: 10%; animation-delay: 2s;"></div>
+    <div class="morph-shape" style="width: 250px; height: 250px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+
+    <!-- Navigation -->
+    <nav class="glass fixed top-0 left-0 right-0 z-50 p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="orbitron text-2xl font-bold neon-text">
+                    <span class="text-cyan-400">Skill</span><span class="text-pink-400">Swap</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">Home</a>
+                    <a href="#" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">Explore</a>
+                    <a href="#" class="text-white hover:text-cyan-400 transition-colors duration-300 font-medium">About</a>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4" id="navAuth">
+                <!-- This will be populated by JavaScript -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center px-4">
+        <div class="text-center z-10">
+            <h1 class="hero-title orbitron text-6xl md:text-8xl font-black mb-8 neon-text">
+                <span class="text-cyan-400">Revolutionary</span><br>
+                <span class="text-pink-400">Skill Exchange</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Experience the future of knowledge sharing with our cutting-edge platform. 
+                Connect, learn, and grow through innovative skill swapping technology.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <button class="cyber-button pulse-glow text-lg px-8 py-4">
+                    Start Exploring
+                </button>
+                <button class="glass px-8 py-4 rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 font-medium text-lg">
+                    Watch Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search and Filters Section -->
+    <section class="relative py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="glass rounded-3xl p-8 mb-12">
+                <div class="search-container mb-8">
+                    <input type="text" placeholder="Search for skills, users, or expertise..." class="search-input">
+                </div>
+                
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <div class="filter-pill active">All Skills</div>
+                    <div class="filter-pill">Technology</div>
+                    <div class="filter-pill">Design</div>
+                    <div class="filter-pill">Business</div>
+                    <div class="filter-pill">Creative</div>
+                    <div class="filter-pill">Languages</div>
+                    <div class="filter-pill">Music</div>
+                    <div class="filter-pill">Sports</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Users Grid -->
+    <section class="relative py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="orbitron text-4xl font-bold text-center mb-16 neon-text">
+                <span class="text-cyan-400">Featured</span> <span class="text-pink-400">Skill Masters</span>
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="userGrid">
+                <!-- User cards will be dynamically generated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Pagination -->
+    <section class="relative py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-center items-center space-x-4">
+                <button class="glass px-4 py-2 rounded-lg text-white hover:bg-white hover:text-black transition-all duration-300">
+                    Previous
+                </button>
+                <div class="flex space-x-2">
+                    <button class="glass px-4 py-2 rounded-lg text-white bg-cyan-400 text-black">1</button>
+                    <button class="glass px-4 py-2 rounded-lg text-white hover:bg-white hover:text-black transition-all duration-300">2</button>
+                    <button class="glass px-4 py-2 rounded-lg text-white hover:bg-white hover:text-black transition-all duration-300">3</button>
+                    <button class="glass px-4 py-2 rounded-lg text-white hover:bg-white hover:text-black transition-all duration-300">4</button>
+                </div>
+                <button class="glass px-4 py-2 rounded-lg text-white hover:bg-white hover:text-black transition-all duration-300">
+                    Next
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-dark mt-20 py-12 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="orbitron text-2xl font-bold neon-text mb-6">
+                <span class="text-cyan-400">Skill</span><span class="text-pink-400">Swap</span>
+            </div>
+            <p class="text-white/60 mb-8">
+                Revolutionizing the way people connect and share knowledge through innovative technology.
+            </p>
+            <div class="flex justify-center space-x-6 text-white/60">
+                <a href="#" class="hover:text-cyan-400 transition-colors">Privacy</a>
+                <a href="#" class="hover:text-cyan-400 transition-colors">Terms</a>
+                <a href="#" class="hover:text-cyan-400 transition-colors">Contact</a>
+                <a href="#" class="hover:text-cyan-400 transition-colors">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+        
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
+        // Particle System
+        const particlesContainer = document.getElementById('particles');
+        const particles = [];
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.size = Math.random() * 3 + 1;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+            }
+            
+            draw() {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = this.x + 'px';
+                particle.style.top = this.y + 'px';
+                particle.style.width = this.size + 'px';
+                particle.style.height = this.size + 'px';
+                particle.style.background = 'rgba(0, 212, 255, ' + this.opacity + ')';
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                
+                particlesContainer.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 100);
+            }
+        }
+        
+        // Create particles
+        for (let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
+        
+        function animateParticles() {
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+        
+        // Interactive Effects
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.width = '30px';
+            cursor.style.height = '30px';
+            cursor.style.background = 'radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%)';
+            cursor.style.borderRadius = '50%';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '9999';
+            
+            document.body.appendChild(cursor);
+            
+            setTimeout(() => {
+                cursor.remove();
+            }, 1000);
+        });
+        
+        // Filter functionality
+        document.querySelectorAll('.filter-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Add animation effect
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const userCards = document.querySelectorAll('.user-card');
+            
+            userCards.forEach(card => {
+                const userName = card.querySelector('h3').textContent.toLowerCase();
+                const userSkills = Array.from(card.querySelectorAll('.skill-tag')).map(tag => tag.textContent.toLowerCase());
+                
+                const matches = userName.includes(searchTerm) || userSkills.some(skill => skill.includes(searchTerm));
+                
+                if (matches || searchTerm === '') {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.5s ease-in-out';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Add fadeIn animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // User Authentication Management
+        function checkAuthStatus() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const navAuth = document.getElementById('navAuth');
+            
+            if (currentUser && currentUser.isLoggedIn) {
+                // User is logged in - show profile and logout
+                const avatarStyle = currentUser.photoData ? 
+                    `style="background-image: url(${currentUser.photoData}); background-size: cover; background-position: center;"` : '';
+                
+                navAuth.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="relative group">
+                            <button onclick="toggleProfileMenu()" class="flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm" ${avatarStyle}>
+                                    ${currentUser.photoData ? '' : currentUser.avatar}
+                                </div>
+                                <span class="hidden md:block">${currentUser.firstName}</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                                <a href="my-profile.html" class="block px-4 py-2 text-white hover:bg-white/10 transition-colors">My Profile</a>
+                                <a href="#" class="block px-4 py-2 text-white hover:bg-white/10 transition-colors">Settings</a>
+                                <hr class="border-white/20">
+                                <button onclick="logout()" class="block w-full text-left px-4 py-2 text-red-400 hover:bg-white/10 transition-colors">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // User is not logged in - show login and register
+                navAuth.innerHTML = `
+                    <a href="login.html" class="cyber-button text-sm">Login</a>
+                    <a href="register.html" class="glass px-6 py-2 rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 font-medium">Register</a>
+                `;
+            }
+        }
+
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('opacity-0');
+            menu.classList.toggle('invisible');
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            checkAuthStatus();
+            window.location.reload();
+        }
+
+        // User data for dynamic generation
+        const users = [
+            {
+                firstName: 'Archi',
+                lastName: 'Mandani',
+                avatar: 'AM',
+                title: 'Full Stack Developer',
+                skillsOffered: ['React', 'Node.js', 'Python', 'AWS'],
+                skillsWanted: ['UI/UX Design', 'Mobile Dev'],
+                availability: 'available',
+                bio: 'Passionate full-stack developer with expertise in modern web technologies.',
+                avatarBg: 'from-cyan-400 to-pink-400',
+                titleColor: 'text-cyan-400'
+            },
+            {
+                firstName: 'Juli',
+                lastName: 'Kyada',
+                avatar: 'JK',
+                title: 'UI/UX Designer',
+                skillsOffered: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
+                skillsWanted: ['Frontend Dev', 'Animation'],
+                availability: 'busy',
+                bio: 'Creative UI/UX designer focused on creating beautiful and functional user experiences.',
+                avatarBg: 'from-purple-400 to-yellow-400',
+                titleColor: 'text-pink-400'
+            },
+            {
+                firstName: 'Darshika',
+                lastName: 'Dhudhat',
+                avatar: 'DD',
+                title: 'Data Scientist',
+                skillsOffered: ['Python', 'Machine Learning', 'SQL', 'TensorFlow'],
+                skillsWanted: ['Web Development', 'DevOps'],
+                availability: 'available',
+                bio: 'Data scientist passionate about extracting insights from complex datasets.',
+                avatarBg: 'from-green-400 to-blue-400',
+                titleColor: 'text-green-400'
+            },
+            {
+                firstName: 'Nyuti',
+                lastName: 'Bhesania',
+                avatar: 'NB',
+                title: 'Digital Marketing',
+                skillsOffered: ['SEO', 'Social Media', 'Google Ads', 'Analytics'],
+                skillsWanted: ['Content Creation', 'Video Editing'],
+                availability: 'available',
+                bio: 'Digital marketing expert helping businesses grow their online presence.',
+                avatarBg: 'from-red-400 to-orange-400',
+                titleColor: 'text-orange-400'
+            },
+            {
+                firstName: 'Khushi',
+                lastName: 'Donga',
+                avatar: 'KD',
+                title: 'UI/UX Designer',
+                skillsOffered: ['Figma', 'Adobe XD', 'Prototyping', 'User Research'],
+                skillsWanted: ['Frontend Dev', 'Animation'],
+                availability: 'busy',
+                bio: 'Creative designer with a passion for user-centered design solutions.',
+                avatarBg: 'from-purple-400 to-yellow-400',
+                titleColor: 'text-pink-400'
+            },
+            {
+                firstName: 'Dishva',
+                lastName: 'Vasoya',
+                avatar: 'DV',
+                title: 'Mobile Developer',
+                skillsOffered: ['React Native', 'Flutter', 'iOS', 'Android'],
+                skillsWanted: ['Backend Dev', 'UI Design'],
+                availability: 'offline',
+                bio: 'Mobile app developer creating innovative solutions for iOS and Android.',
+                avatarBg: 'from-indigo-400 to-purple-400',
+                titleColor: 'text-indigo-400'
+            }
+        ];
+
+        function loadUserGrid() {
+            const userGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-8');
+            if (!userGrid) return;
+            
+            userGrid.innerHTML = '';
+            
+            users.forEach((user, index) => {
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card float';
+                userCard.style.animationDelay = `${index * 0.5}s`;
+                
+                const userData = encodeURIComponent(JSON.stringify(user));
+                
+                userCard.innerHTML = `
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-r ${user.avatarBg} flex items-center justify-center text-white font-bold text-xl mr-4">
+                            ${user.avatar}
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">${user.firstName} ${user.lastName}</h3>
+                            <p class="${user.titleColor}">${user.title}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-white font-semibold mb-3">Skills Offered:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${user.skillsOffered.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-white font-semibold mb-3">Skills Wanted:</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${user.skillsWanted.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="${getAvailabilityColor(user.availability)} text-sm">${getAvailabilityIcon(user.availability)} ${getAvailabilityText(user.availability)}</span>
+                        <a href="user-profile.html?user=${userData}" class="cyber-button text-sm">View Profile</a>
+                    </div>
+                `;
+                
+                userGrid.appendChild(userCard);
+            });
+        }
+
+        function getAvailabilityColor(availability) {
+            switch(availability) {
+                case 'available': return 'text-green-400';
+                case 'busy': return 'text-yellow-400';
+                case 'limited': return 'text-orange-400';
+                case 'offline': return 'text-red-400';
+                default: return 'text-gray-400';
+            }
+        }
+
+        function getAvailabilityIcon(availability) {
+            switch(availability) {
+                case 'available': return '🟢';
+                case 'busy': return '🟡';
+                case 'limited': return '🟠';
+                case 'offline': return '🔴';
+                default: return '⚪';
+            }
+        }
+
+        function getAvailabilityText(availability) {
+            switch(availability) {
+                case 'available': return 'Available';
+                case 'busy': return 'Busy';
+                case 'limited': return 'Limited';
+                case 'offline': return 'Offline';
+                default: return 'Unknown';
+            }
+        }
+
+        // Initialize auth status on page load
+        checkAuthStatus();
+        loadUserGrid();
+    </script>
+</body>
+</html> 

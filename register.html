@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Revolutionary Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* Holographic Container */
+        .holographic-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 50px rgba(255, 107, 107, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .holographic-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(255, 107, 107, 0.1),
+                transparent,
+                rgba(0, 212, 255, 0.1),
+                transparent,
+                rgba(138, 43, 226, 0.1),
+                transparent
+            );
+            animation: holographic-rotate 8s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes holographic-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Neon Text */
+        .neon-text {
+            text-shadow: 
+                0 0 10px rgba(255, 107, 107, 0.8),
+                0 0 20px rgba(255, 107, 107, 0.6),
+                0 0 30px rgba(255, 107, 107, 0.4);
+        }
+
+        .neon-text-cyan {
+            text-shadow: 
+                0 0 10px rgba(0, 212, 255, 0.8),
+                0 0 20px rgba(0, 212, 255, 0.6),
+                0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Cyber Input Fields */
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 15px;
+            color: white;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            border-color: rgba(255, 107, 107, 0.8);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .cyber-input:focus::before {
+            left: 100%;
+        }
+
+        .cyber-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Cyber Button */
+        .cyber-button {
+            background: linear-gradient(45deg, #ff6b6b, #00d4ff);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .cyber-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Skill Selection */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 14px;
+        }
+
+        .skill-option:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: rgba(255, 107, 107, 0.5);
+            transform: scale(1.05);
+        }
+
+        .skill-option.selected {
+            background: linear-gradient(45deg, #ff6b6b, #00d4ff);
+            border-color: transparent;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(45deg, #ff6b6b, #00d4ff);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.2), rgba(0, 212, 255, 0.2));
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Particle System */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Animation */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #ff6b6b;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #ff6b6b;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .success-checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #ff6b6b;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .success-checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+        }
+
+        @keyframes fill {
+            100% { box-shadow: inset 0px 0px 0px 30px #ff6b6b; }
+        }
+
+        /* Form Steps */
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .holographic-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .skill-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Elements -->
+    <div class="floating-element" style="width: 200px; height: 200px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="floating-element" style="width: 150px; height: 150px; top: 60%; right: 10%; animation-delay: 2s;"></div>
+    <div class="floating-element" style="width: 100px; height: 100px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+    
+    <!-- Particle System -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="holographic-container w-full max-w-2xl p-8">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <h1 class="orbitron text-4xl font-black mb-2 neon-text">
+                    <span class="text-pink-400">Join</span> <span class="text-cyan-400 neon-text-cyan">SkillSwap</span>
+                </h1>
+                <p class="text-white/60 text-lg">Create Your Digital Identity</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 25%"></div>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registerForm" class="space-y-6">
+                <!-- Step 1: Basic Info -->
+                <div class="form-step active" id="step1">
+                    <h2 class="orbitron text-2xl font-bold text-white mb-6 text-center">Basic Information</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-white font-semibold mb-3">First Name</label>
+                            <input type="text" id="firstName" class="cyber-input w-full" placeholder="Enter first name" required>
+                        </div>
+                        <div>
+                            <label class="block text-white font-semibold mb-3">Last Name</label>
+                            <input type="text" id="lastName" class="cyber-input w-full" placeholder="Enter last name" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Username</label>
+                        <input type="text" id="username" class="cyber-input w-full" placeholder="Choose a unique username" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Email</label>
+                        <input type="email" id="email" class="cyber-input w-full" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="button" onclick="nextStep()" class="cyber-button">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Skills -->
+                <div class="form-step" id="step2">
+                    <h2 class="orbitron text-2xl font-bold text-white mb-6 text-center">Your Skills</h2>
+                    
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Skills You Can Offer</label>
+                        <div class="skill-grid" id="skillsOffered">
+                            <div class="skill-option" data-skill="Programming">Programming</div>
+                            <div class="skill-option" data-skill="Design">Design</div>
+                            <div class="skill-option" data-skill="Marketing">Marketing</div>
+                            <div class="skill-option" data-skill="Writing">Writing</div>
+                            <div class="skill-option" data-skill="Music">Music</div>
+                            <div class="skill-option" data-skill="Photography">Photography</div>
+                            <div class="skill-option" data-skill="Cooking">Cooking</div>
+                            <div class="skill-option" data-skill="Languages">Languages</div>
+                            <div class="skill-option" data-skill="Fitness">Fitness</div>
+                            <div class="skill-option" data-skill="Business">Business</div>
+                            <div class="skill-option" data-skill="Art">Art</div>
+                            <div class="skill-option" data-skill="Technology">Technology</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block text-white font-semibold mb-3">Skills You Want to Learn</label>
+                        <div class="skill-grid" id="skillsWanted">
+                            <div class="skill-option" data-skill="Programming">Programming</div>
+                            <div class="skill-option" data-skill="Design">Design</div>
+                            <div class="skill-option" data-skill="Marketing">Marketing</div>
+                            <div class="skill-option" data-skill="Writing">Writing</div>
+                            <div class="skill-option" data-skill="Music">Music</div>
+                            <div class="skill-option" data-skill="Photography">Photography</div>
+                            <div class="skill-option" data-skill="Cooking">Cooking</div>
+                            <div class="skill-option" data-skill="Languages">Languages</div>
+                            <div class="skill-option" data-skill="Fitness">Fitness</div>
+                            <div class="skill-option" data-skill="Business">Business</div>
+                            <div class="skill-option" data-skill="Art">Art</div>
+                            <div class="skill-option" data-skill="Technology">Technology</div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="prevStep()" class="cyber-button" style="background: linear-gradient(45deg, #666, #999);">Previous</button>
+                        <button type="button" onclick="nextStep()" class="cyber-button">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Security -->
+                <div class="form-step" id="step3">
+                    <h2 class="orbitron text-2xl font-bold text-white mb-6 text-center">Security Setup</h2>
+                    
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Password</label>
+                        <input type="password" id="password" class="cyber-input w-full" placeholder="Create a strong password" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="cyber-input w-full" placeholder="Confirm your password" required>
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="prevStep()" class="cyber-button" style="background: linear-gradient(45deg, #666, #999);">Previous</button>
+                        <button type="button" onclick="nextStep()" class="cyber-button">Next Step</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Profile -->
+                <div class="form-step" id="step4">
+                    <h2 class="orbitron text-2xl font-bold text-white mb-6 text-center">Profile Setup</h2>
+                    
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Bio</label>
+                        <textarea id="bio" class="cyber-input w-full h-24 resize-none" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Location</label>
+                        <input type="text" id="location" class="cyber-input w-full" placeholder="Your city/country">
+                    </div>
+
+                    <div>
+                        <label class="block text-white font-semibold mb-3">Availability</label>
+                        <select id="availability" class="cyber-input w-full">
+                            <option value="available">Available for swaps</option>
+                            <option value="busy">Busy but accepting requests</option>
+                            <option value="limited">Limited availability</option>
+                            <option value="offline">Currently offline</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="prevStep()" class="cyber-button" style="background: linear-gradient(45deg, #666, #999);">Previous</button>
+                        <button type="submit" class="cyber-button">
+                            <span id="buttonText">Create Account</span>
+                            <div id="loadingSpinner" class="loading-spinner hidden mx-auto mt-2"></div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Login Link -->
+            <div class="mt-8 text-center">
+                <p class="text-white/60">
+                    Already have an account? 
+                    <a href="login.html" class="text-pink-400 hover:text-pink-300 transition-colors font-semibold">Sign In</a>
+                </p>
+            </div>
+
+            <!-- Back to Home -->
+            <div class="mt-6 text-center">
+                <a href="index.html" class="text-white/60 hover:text-white transition-colors text-sm">
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="holographic-container p-8 text-center max-w-sm">
+            <svg class="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="success-checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="success-checkmark__check" fill="none" d="m14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            <h3 class="orbitron text-2xl font-bold text-white mt-4 mb-2">Account Created!</h3>
+            <p class="text-white/60 mb-6">Welcome to the SkillSwap community!</p>
+            <button onclick="closeSuccessModal()" class="cyber-button">Get Started</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        let selectedSkillsOffered = [];
+        let selectedSkillsWanted = [];
+
+        // Particle System
+        const particlesContainer = document.getElementById('particles');
+        const particles = [];
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 2 + 1;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = Math.random() > 0.5 ? '#ff6b6b' : '#00d4ff';
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+            }
+            
+            draw() {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = this.x + 'px';
+                particle.style.top = this.y + 'px';
+                particle.style.width = this.size + 'px';
+                particle.style.height = this.size + 'px';
+                particle.style.background = this.color;
+                particle.style.opacity = this.opacity;
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                particle.style.boxShadow = `0 0 ${this.size * 2}px ${this.color}`;
+                
+                particlesContainer.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 200);
+            }
+        }
+        
+        // Create particles
+        for (let i = 0; i < 30; i++) {
+            particles.push(new Particle());
+        }
+        
+        function animateParticles() {
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+
+        // Form Navigation
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep++;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateProgress();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep--;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Skill Selection
+        document.querySelectorAll('#skillsOffered .skill-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const skill = this.dataset.skill;
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                    selectedSkillsOffered = selectedSkillsOffered.filter(s => s !== skill);
+                } else {
+                    this.classList.add('selected');
+                    selectedSkillsOffered.push(skill);
+                }
+            });
+        });
+
+        document.querySelectorAll('#skillsWanted .skill-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const skill = this.dataset.skill;
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                    selectedSkillsWanted = selectedSkillsWanted.filter(s => s !== skill);
+                } else {
+                    this.classList.add('selected');
+                    selectedSkillsWanted.push(skill);
+                }
+            });
+        });
+
+        // Form Submission
+        const registerForm = document.getElementById('registerForm');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const successModal = document.getElementById('successModal');
+
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (selectedSkillsOffered.length === 0) {
+                alert('Please select at least one skill you can offer!');
+                return;
+            }
+            
+            // Show loading state
+            buttonText.textContent = 'Creating Account...';
+            loadingSpinner.classList.remove('hidden');
+            
+            // Simulate account creation
+            setTimeout(() => {
+                // Get form data
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const bio = document.getElementById('bio').value;
+                const location = document.getElementById('location').value;
+                const availability = document.getElementById('availability').value;
+                
+                // Create user object
+                const user = {
+                    username: username,
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    avatar: firstName.charAt(0).toUpperCase() + lastName.charAt(0).toUpperCase(),
+                    skillsOffered: selectedSkillsOffered,
+                    skillsWanted: selectedSkillsWanted,
+                    bio: bio || 'Passionate about learning and sharing skills!',
+                    location: location || 'New York, USA',
+                    availability: availability,
+                    isLoggedIn: true
+                };
+                
+                // Save user to localStorage
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                showSuccessModal();
+            }, 2000);
+        });
+
+        function showSuccessModal() {
+            successModal.classList.remove('hidden');
+            buttonText.textContent = 'Create Account';
+            loadingSpinner.classList.add('hidden');
+        }
+
+        function closeSuccessModal() {
+            successModal.classList.add('hidden');
+            window.location.href = 'index.html';
+        }
+
+        // Interactive Effects
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.width = '30px';
+            cursor.style.height = '30px';
+            cursor.style.background = 'radial-gradient(circle, rgba(255, 107, 107, 0.3) 0%, transparent 70%)';
+            cursor.style.borderRadius = '50%';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '9999';
+            
+            document.body.appendChild(cursor);
+            
+            setTimeout(() => {
+                cursor.remove();
+            }, 1000);
+        });
+
+        // Input focus effects
+        document.querySelectorAll('.cyber-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                if (currentStep === totalSteps) {
+                    registerForm.dispatchEvent(new Event('submit'));
+                } else {
+                    nextStep();
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

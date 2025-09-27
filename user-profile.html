@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Revolutionary User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* Holographic Profile Container */
+        .holographic-profile {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 50px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .holographic-profile::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(0, 212, 255, 0.1),
+                transparent,
+                rgba(255, 107, 107, 0.1),
+                transparent,
+                rgba(138, 43, 226, 0.1),
+                transparent
+            );
+            animation: holographic-rotate 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes holographic-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 107, 0.1));
+            border-radius: 25px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            margin: 0 auto 20px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #8a2be2, #00d4ff);
+            border-radius: 50%;
+            z-index: -1;
+            animation: border-rotate 3s linear infinite;
+        }
+
+        @keyframes border-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Neon Text */
+        .neon-text {
+            text-shadow: 
+                0 0 10px rgba(0, 212, 255, 0.8),
+                0 0 20px rgba(0, 212, 255, 0.6),
+                0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .neon-text-pink {
+            text-shadow: 
+                0 0 10px rgba(255, 107, 107, 0.8),
+                0 0 20px rgba(255, 107, 107, 0.6),
+                0 0 30px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Skill Tags */
+        .skill-tag {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px;
+            display: inline-block;
+            animation: skill-pulse 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .skill-tag:hover::before {
+            left: 100%;
+        }
+
+        @keyframes skill-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Cyber Button */
+        .cyber-button {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Rating Stars */
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .star {
+            color: #ffd700;
+            font-size: 20px;
+            animation: star-twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes star-twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* Review Cards */
+        .review-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .review-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .review-card:hover::before {
+            left: 100%;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .status-available {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            animation: status-pulse 2s ease-in-out infinite;
+        }
+
+        .status-busy {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+            border: 1px solid rgba(255, 165, 0, 0.3);
+        }
+
+        .status-limited {
+            background: rgba(255, 69, 0, 0.2);
+            color: #ff4500;
+            border: 1px solid rgba(255, 69, 0, 0.3);
+        }
+
+        .status-offline {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        @keyframes status-pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 0, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.6); }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(0, 212, 255, 0.2), rgba(255, 107, 107, 0.2));
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Particle System */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .holographic-profile {
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Elements -->
+    <div class="floating-element" style="width: 200px; height: 200px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="floating-element" style="width: 150px; height: 150px; top: 60%; right: 10%; animation-delay: 2s;"></div>
+    <div class="floating-element" style="width: 100px; height: 100px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+    
+    <!-- Particle System -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="orbitron text-2xl font-bold neon-text">
+                <span class="text-cyan-400">←</span> <span class="text-cyan-400">Skill</span><span class="text-pink-400">Swap</span>
+            </a>
+            <div class="flex items-center space-x-4" id="navAuth">
+                <!-- This will be populated by JavaScript -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="min-h-screen flex items-center justify-center p-4 pt-20">
+        <div class="holographic-profile w-full max-w-4xl p-8">
+            <!-- Profile Header -->
+            <div class="profile-header text-center mb-8">
+                <div class="profile-avatar" id="profileAvatar">AS</div>
+                <h1 class="orbitron text-4xl font-black mb-2 neon-text" id="profileName">Alex Smith</h1>
+                <p class="text-cyan-400 text-xl mb-3" id="profileTitle">Full Stack Developer</p>
+                <div class="rating-stars">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <p class="text-white/60 mb-4">4.9/5.0 (127 reviews)</p>
+                <span class="status-badge status-available" id="profileStatus">🟢 Available for Swaps</span>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column -->
+                <div class="space-y-6">
+                    <!-- Skills Offered -->
+                    <div class="holographic-profile p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="orbitron text-xl font-bold text-white neon-text">Skills Offered</h3>
+                            <button onclick="toggleEdit('skillsOffered')" class="text-cyan-400 hover:text-cyan-300 text-sm">Edit</button>
+                        </div>
+                        <div class="flex flex-wrap" id="skillsOfferedDisplay">
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">AWS</span>
+                            <span class="skill-tag">MongoDB</span>
+                            <span class="skill-tag">Docker</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">GraphQL</span>
+                        </div>
+                        <div id="skillsOfferedEdit" class="hidden">
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="React" class="mr-2"> React
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="Node.js" class="mr-2"> Node.js
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="Python" class="mr-2"> Python
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="AWS" class="mr-2"> AWS
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="MongoDB" class="mr-2"> MongoDB
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="Docker" class="mr-2"> Docker
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="TypeScript" class="mr-2"> TypeScript
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="GraphQL" class="mr-2"> GraphQL
+                                </label>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="saveSkills('skillsOffered')" class="cyber-button text-sm">Save</button>
+                                <button onclick="cancelEdit('skillsOffered')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills Wanted -->
+                    <div class="holographic-profile p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="orbitron text-xl font-bold text-white neon-text-pink">Skills Wanted</h3>
+                            <button onclick="toggleEdit('skillsWanted')" class="text-pink-400 hover:text-pink-300 text-sm">Edit</button>
+                        </div>
+                        <div class="flex flex-wrap" id="skillsWantedDisplay">
+                            <span class="skill-tag" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">UI/UX Design</span>
+                            <span class="skill-tag" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">Mobile Development</span>
+                            <span class="skill-tag" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">DevOps</span>
+                        </div>
+                        <div id="skillsWantedEdit" class="hidden">
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="UI/UX Design" class="mr-2"> UI/UX Design
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="Mobile Development" class="mr-2"> Mobile Development
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="DevOps" class="mr-2"> DevOps
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="Digital Marketing" class="mr-2"> Digital Marketing
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="Content Writing" class="mr-2"> Content Writing
+                                </label>
+                                <label class="flex items-center text-white">
+                                    <input type="checkbox" value="Photography" class="mr-2"> Photography
+                                </label>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="saveSkills('skillsWanted')" class="cyber-button text-sm">Save</button>
+                                <button onclick="cancelEdit('skillsWanted')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Availability -->
+                    <div class="holographic-profile p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="orbitron text-xl font-bold text-white">Availability</h3>
+                            <button onclick="toggleEdit('availability')" class="text-cyan-400 hover:text-cyan-300 text-sm">Edit</button>
+                        </div>
+                        <div id="availabilityDisplay" class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-white">Weekdays</span>
+                                <span class="text-green-400">6:00 PM - 10:00 PM</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-white">Weekends</span>
+                                <span class="text-green-400">10:00 AM - 6:00 PM</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-white">Timezone</span>
+                                <span class="text-cyan-400">EST (UTC-5)</span>
+                            </div>
+                        </div>
+                        <div id="availabilityEdit" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-white mb-2">Status</label>
+                                <select id="availabilityStatus" class="cyber-input w-full">
+                                    <option value="available">Available for swaps</option>
+                                    <option value="busy">Busy but accepting requests</option>
+                                    <option value="limited">Limited availability</option>
+                                    <option value="offline">Currently offline</option>
+                                </select>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="saveAvailability()" class="cyber-button text-sm">Save</button>
+                                <button onclick="cancelEdit('availability')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- About -->
+                    <div class="holographic-profile p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="orbitron text-xl font-bold text-white">About</h3>
+                            <button onclick="toggleEdit('about')" class="text-cyan-400 hover:text-cyan-300 text-sm">Edit</button>
+                        </div>
+                        <div id="aboutDisplay">
+                            <p class="text-white/80 leading-relaxed">
+                                Passionate full-stack developer with 5+ years of experience building scalable web applications. 
+                                I love learning new technologies and sharing knowledge with others. Always excited to help 
+                                others grow their skills while expanding my own expertise.
+                            </p>
+                        </div>
+                        <div id="aboutEdit" class="hidden">
+                            <textarea id="aboutText" class="cyber-input w-full h-32 resize-none" 
+                                      placeholder="Tell us about yourself...">Passionate full-stack developer with 5+ years of experience building scalable web applications. I love learning new technologies and sharing knowledge with others. Always excited to help others grow their skills while expanding my own expertise.</textarea>
+                            <div class="flex gap-2 mt-4">
+                                <button onclick="saveAbout()" class="cyber-button text-sm">Save</button>
+                                <button onclick="cancelEdit('about')" class="cyber-button text-sm" style="background: linear-gradient(45deg, #666, #999);">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="saveAllChanges()" class="cyber-button flex-1">
+                            Save All Changes
+                        </button>
+                        <button onclick="window.location.href='index.html'" class="cyber-button flex-1" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">
+                            Back to Home
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swap Request Modal -->
+    <div id="swapModal" class="modal">
+        <div class="modal-content">
+            <h3 class="orbitron text-2xl font-bold text-white mb-6 text-center">Request Skill Swap</h3>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-white font-semibold mb-2">Your Skill to Offer</label>
+                    <select class="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white">
+                        <option>Select a skill...</option>
+                        <option>UI/UX Design</option>
+                        <option>Mobile Development</option>
+                        <option>Digital Marketing</option>
+                        <option>Content Writing</option>
+                        <option>Photography</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-white font-semibold mb-2">Skill You Want to Learn</label>
+                    <select class="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white">
+                        <option>Select a skill...</option>
+                        <option>React</option>
+                        <option>Node.js</option>
+                        <option>Python</option>
+                        <option>AWS</option>
+                        <option>MongoDB</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-white font-semibold mb-2">Message</label>
+                    <textarea class="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white h-24 resize-none" 
+                              placeholder="Tell Alex why you'd like to swap skills..."></textarea>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="button" onclick="closeSwapModal()" class="cyber-button flex-1" 
+                            style="background: linear-gradient(45deg, #666, #999);">
+                        Cancel
+                    </button>
+                    <button type="submit" class="cyber-button flex-1">
+                        Send Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Particle System
+        const particlesContainer = document.getElementById('particles');
+        const particles = [];
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 2 + 1;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = Math.random() > 0.5 ? '#00d4ff' : '#ff6b6b';
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+            }
+            
+            draw() {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = this.x + 'px';
+                particle.style.top = this.y + 'px';
+                particle.style.width = this.size + 'px';
+                particle.style.height = this.size + 'px';
+                particle.style.background = this.color;
+                particle.style.opacity = this.opacity;
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                particle.style.boxShadow = `0 0 ${this.size * 2}px ${this.color}`;
+                
+                particlesContainer.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 200);
+            }
+        }
+        
+        // Create particles
+        for (let i = 0; i < 30; i++) {
+            particles.push(new Particle());
+        }
+        
+        function animateParticles() {
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+
+        // Modal Functions
+        function openSwapModal() {
+            document.getElementById('swapModal').classList.add('active');
+        }
+
+        function closeSwapModal() {
+            document.getElementById('swapModal').classList.remove('active');
+        }
+
+        function sendMessage() {
+            alert('Message feature coming soon!');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('swapModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSwapModal();
+            }
+        });
+
+        // Interactive Effects
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.width = '30px';
+            cursor.style.height = '30px';
+            cursor.style.background = 'radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%)';
+            cursor.style.borderRadius = '50%';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '9999';
+            
+            document.body.appendChild(cursor);
+            
+            setTimeout(() => {
+                cursor.remove();
+            }, 1000);
+        });
+
+        // Skill tag hover effects
+        document.querySelectorAll('.skill-tag').forEach(tag => {
+            tag.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1) rotate(2deg)';
+            });
+            
+            tag.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+
+        // User Authentication Management
+        function checkAuthStatus() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const navAuth = document.getElementById('navAuth');
+            
+            if (currentUser && currentUser.isLoggedIn) {
+                // User is logged in - show profile and logout
+                navAuth.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="relative group">
+                            <button onclick="toggleProfileMenu()" class="flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center text-white font-bold text-sm">
+                                    ${currentUser.avatar}
+                                </div>
+                                <span class="hidden md:block">${currentUser.firstName}</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-lg border border-white/20 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                                <a href="user-profile.html" class="block px-4 py-2 text-white hover:bg-white/10 transition-colors">My Profile</a>
+                                <a href="#" class="block px-4 py-2 text-white hover:bg-white/10 transition-colors">Settings</a>
+                                <hr class="border-white/20">
+                                <button onclick="logout()" class="block w-full text-left px-4 py-2 text-red-400 hover:bg-white/10 transition-colors">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // User is not logged in - redirect to login
+                window.location.href = 'login.html';
+            }
+        }
+
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('opacity-0');
+            menu.classList.toggle('invisible');
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        // Profile Management
+        let currentUser = null;
+
+        function loadUserProfile() {
+            // Check if we're viewing someone else's profile via URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const userData = urlParams.get('user');
+            
+            if (!userData) {
+                // If no URL parameters, redirect to my-profile.html for current user
+                const currentUserData = JSON.parse(localStorage.getItem('currentUser'));
+                if (!currentUserData) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                window.location.href = 'my-profile.html';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(decodeURIComponent(userData));
+                const currentUserData = JSON.parse(localStorage.getItem('currentUser'));
+                
+                // Check if this is the current user's profile
+                const isOwnProfile = currentUserData && 
+                    currentUserData.firstName === user.firstName && 
+                    currentUserData.lastName === user.lastName;
+                
+                // If it's own profile, redirect to my-profile.html
+                if (isOwnProfile) {
+                    window.location.href = 'my-profile.html';
+                    return;
+                }
+                
+                // Display other user's profile (no edit options)
+                displayUserProfile(user, false);
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function displayUserProfile(user, isEditable) {
+            document.getElementById('profileAvatar').textContent = user.avatar;
+            document.getElementById('profileName').textContent = `${user.firstName} ${user.lastName}`;
+            document.getElementById('profileTitle').textContent = user.bio ? user.bio.split(' ').slice(0, 3).join(' ') + '...' : 'Skill Swapper';
+            
+            // Load saved profile photo if it exists
+            if (user.photoData) {
+                const photoElement = document.getElementById('profilePhoto');
+                const avatarElement = document.getElementById('profileAvatar');
+                
+                photoElement.style.backgroundImage = `url(${user.photoData})`;
+                photoElement.style.backgroundSize = 'cover';
+                photoElement.style.backgroundPosition = 'center';
+                photoElement.textContent = '';
+                
+                avatarElement.style.backgroundImage = `url(${user.photoData})`;
+                avatarElement.style.backgroundSize = 'cover';
+                avatarElement.style.backgroundPosition = 'center';
+                avatarElement.textContent = '';
+            }
+            
+            // Update status
+            const statusElement = document.getElementById('profileStatus');
+            if (user.availability === 'available') {
+                statusElement.textContent = '🟢 Available for Swaps';
+                statusElement.className = 'status-badge status-available';
+            } else if (user.availability === 'busy') {
+                statusElement.textContent = '🟡 Busy but accepting requests';
+                statusElement.className = 'status-badge status-busy';
+            } else if (user.availability === 'limited') {
+                statusElement.textContent = '🟠 Limited availability';
+                statusElement.className = 'status-badge status-limited';
+            } else {
+                statusElement.textContent = '🔴 Currently offline';
+                statusElement.className = 'status-badge status-offline';
+            }
+
+            // Update skills offered
+            updateSkillsDisplay('skillsOfferedDisplay', user.skillsOffered || ['React', 'Node.js', 'Python']);
+            
+            // Update skills wanted
+            updateSkillsDisplay('skillsWantedDisplay', user.skillsWanted || ['UI/UX Design', 'Mobile Development'], true);
+            
+            // Update about section
+            document.getElementById('aboutDisplay').innerHTML = `<p class="text-white/80 leading-relaxed">${user.bio || 'Passionate about learning and sharing skills!'}</p>`;
+            
+            // Hide edit buttons and photo upload for other users
+            const editButtons = document.querySelectorAll('[onclick^="toggleEdit"]');
+            editButtons.forEach(button => {
+                button.style.display = 'none';
+            });
+            
+            // Hide photo upload section
+            const photoUploadSection = document.querySelector('.photo-upload-section');
+            if (photoUploadSection) {
+                photoUploadSection.style.display = 'none';
+            }
+            
+            // Update action buttons for other users
+            const actionButtons = document.querySelector('.flex.flex-col.sm\\:flex-row.gap-4');
+            if (actionButtons) {
+                actionButtons.innerHTML = `
+                    <button onclick="requestSwap()" class="cyber-button flex-1">
+                        Request Skill Swap
+                    </button>
+                    <button onclick="sendMessage()" class="cyber-button flex-1" style="background: linear-gradient(45deg, #ff6b6b, #ff8e8e);">
+                        Send Message
+                    </button>
+                    <button onclick="window.location.href='index.html'" class="cyber-button flex-1" style="background: linear-gradient(45deg, #666, #999);">
+                        Back to Home
+                    </button>
+                `;
+            }
+        }
+
+        function updateSkillsDisplay(containerId, skills, isWanted = false) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            skills.forEach(skill => {
+                const tag = document.createElement('span');
+                tag.className = 'skill-tag';
+                if (isWanted) {
+                    tag.style.background = 'linear-gradient(45deg, #ff6b6b, #ff8e8e)';
+                }
+                tag.textContent = skill;
+                container.appendChild(tag);
+            });
+        }
+
+        // Edit functionality
+        function toggleEdit(section) {
+            const displayElement = document.getElementById(section === 'about' ? 'aboutDisplay' : section + 'Display');
+            const editElement = document.getElementById(section === 'about' ? 'aboutEdit' : section + 'Edit');
+            
+            displayElement.classList.add('hidden');
+            editElement.classList.remove('hidden');
+            
+            // Pre-populate edit fields
+            if (section === 'skillsOffered') {
+                populateSkillsCheckboxes('skillsOfferedEdit', currentUser.skillsOffered || []);
+            } else if (section === 'skillsWanted') {
+                populateSkillsCheckboxes('skillsWantedEdit', currentUser.skillsWanted || []);
+            } else if (section === 'availability') {
+                document.getElementById('availabilityStatus').value = currentUser.availability || 'available';
+            } else if (section === 'about') {
+                document.getElementById('aboutText').value = currentUser.bio || '';
+            }
+        }
+
+        function populateSkillsCheckboxes(containerId, selectedSkills) {
+            const checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectedSkills.includes(checkbox.value);
+            });
+        }
+
+        function cancelEdit(section) {
+            const displayElement = document.getElementById(section === 'about' ? 'aboutDisplay' : section + 'Display');
+            const editElement = document.getElementById(section === 'about' ? 'aboutEdit' : section + 'Edit');
+            
+            displayElement.classList.remove('hidden');
+            editElement.classList.add('hidden');
+        }
+
+        function saveSkills(section) {
+            const checkboxes = document.querySelectorAll(`#${section}Edit input[type="checkbox"]:checked`);
+            const skills = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (section === 'skillsOffered') {
+                currentUser.skillsOffered = skills;
+                updateSkillsDisplay('skillsOfferedDisplay', skills);
+            } else {
+                currentUser.skillsWanted = skills;
+                updateSkillsDisplay('skillsWantedDisplay', skills, true);
+            }
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            cancelEdit(section);
+        }
+
+        function saveAvailability() {
+            const status = document.getElementById('availabilityStatus').value;
+            currentUser.availability = status;
+            
+            const statusElement = document.getElementById('profileStatus');
+            if (status === 'available') {
+                statusElement.textContent = '🟢 Available for Swaps';
+                statusElement.className = 'status-badge status-available';
+            } else if (status === 'busy') {
+                statusElement.textContent = '🟡 Busy but accepting requests';
+                statusElement.className = 'status-badge status-busy';
+            } else if (status === 'limited') {
+                statusElement.textContent = '🟠 Limited availability';
+                statusElement.className = 'status-badge status-limited';
+            } else {
+                statusElement.textContent = '🔴 Currently offline';
+                statusElement.className = 'status-badge status-offline';
+            }
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            cancelEdit('availability');
+        }
+
+        function saveAbout() {
+            const bio = document.getElementById('aboutText').value;
+            currentUser.bio = bio;
+            
+            document.getElementById('aboutDisplay').innerHTML = `<p class="text-white/80 leading-relaxed">${bio}</p>`;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            cancelEdit('about');
+        }
+
+        function saveAllChanges() {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            alert('All changes saved successfully!');
+        }
+
+        // Action functions for viewing other profiles
+        function requestSwap() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userData = urlParams.get('user');
+            
+            if (!userData) {
+                alert('User information not available');
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(decodeURIComponent(userData));
+                const currentUserData = JSON.parse(localStorage.getItem('currentUser'));
+                
+                if (!currentUserData) {
+                    alert('Please log in to request a skill swap');
+                    return;
+                }
+                
+                // Create swap request
+                const swapRequest = {
+                    id: Date.now() + Math.random(),
+                    fromUser: {
+                        name: `${currentUserData.firstName} ${currentUserData.lastName}`,
+                        email: currentUserData.email
+                    },
+                    toUser: {
+                        name: `${user.firstName} ${user.lastName}`,
+                        email: user.email || 'unknown@email.com'
+                    },
+                    status: 'pending',
+                    requestDate: new Date().toISOString(),
+                    fromUserSkills: currentUserData.skillsOffered || ['Programming', 'Design'],
+                    toUserSkills: user.skillsOffered || []
+                };
+                
+                // Save to localStorage
+                let swapRequests = JSON.parse(localStorage.getItem('swapRequests')) || [];
+                swapRequests.push(swapRequest);
+                localStorage.setItem('swapRequests', JSON.stringify(swapRequests));
+                
+                alert(`Swap request sent to ${user.firstName} ${user.lastName}!`);
+            } catch (error) {
+                alert('Error sending swap request');
+            }
+        }
+
+        function sendMessage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userData = urlParams.get('user');
+            
+            if (!userData) {
+                alert('User information not available');
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(decodeURIComponent(userData));
+                alert(`Message sent to ${user.firstName} ${user.lastName}!`);
+            } catch (error) {
+                alert('Error sending message');
+            }
+        }
+
+
+
+        // Initialize
+        checkAuthStatus();
+        loadUserProfile();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveAllChanges();
+            }
+        });
+    </script>
+</body>
+</html> 

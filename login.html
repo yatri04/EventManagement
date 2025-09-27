@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Revolutionary Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* Holographic Login Container */
+        .holographic-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 50px rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .holographic-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(0, 212, 255, 0.1),
+                transparent,
+                rgba(255, 107, 107, 0.1),
+                transparent,
+                rgba(138, 43, 226, 0.1),
+                transparent
+            );
+            animation: holographic-rotate 8s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes holographic-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(0, 212, 255, 0.2), rgba(255, 107, 107, 0.2));
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Neon Text */
+        .neon-text {
+            text-shadow: 
+                0 0 10px rgba(0, 212, 255, 0.8),
+                0 0 20px rgba(0, 212, 255, 0.6),
+                0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .neon-text-pink {
+            text-shadow: 
+                0 0 10px rgba(255, 107, 107, 0.8),
+                0 0 20px rgba(255, 107, 107, 0.6),
+                0 0 30px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Cyber Input Fields */
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            border-color: rgba(0, 212, 255, 0.8);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .cyber-input:focus::before {
+            left: 100%;
+        }
+
+        .cyber-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Cyber Button */
+        .cyber-button {
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .cyber-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Particle System */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        /* Morphing Background */
+        .morph-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0f0f23, #1a1a2e, #16213e, #0f3460, #533483);
+            background-size: 400% 400%;
+            animation: morph-shift 10s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes morph-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Success Animation */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #00d4ff;
+            stroke-miterlimit: 10;
+            box-shadow: inset 0px 0px 0px #00d4ff;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .success-checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #00d4ff;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+
+        .success-checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+
+        @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+        }
+
+        @keyframes fill {
+            100% { box-shadow: inset 0px 0px 0px 30px #00d4ff; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .holographic-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .orbitron {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Morphing Background -->
+    <div class="morph-bg"></div>
+    
+    <!-- Floating Elements -->
+    <div class="floating-element" style="width: 200px; height: 200px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="floating-element" style="width: 150px; height: 150px; top: 60%; right: 10%; animation-delay: 2s;"></div>
+    <div class="floating-element" style="width: 100px; height: 100px; bottom: 20%; left: 20%; animation-delay: 4s;"></div>
+    
+    <!-- Particle System -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="holographic-container w-full max-w-md p-8">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <h1 class="orbitron text-4xl font-black mb-2 neon-text">
+                    <span class="text-cyan-400">Skill</span><span class="text-pink-400">Swap</span>
+                </h1>
+                <p class="text-white/60 text-lg">Enter the Future of Learning</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-white font-semibold mb-3 text-lg">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="cyber-input w-full" 
+                        placeholder="Enter your username"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-white font-semibold mb-3 text-lg">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="cyber-input w-full" 
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center text-white/80">
+                        <input type="checkbox" class="mr-2 w-4 h-4">
+                        Remember me
+                    </label>
+                    <a href="#" class="text-cyan-400 hover:text-cyan-300 transition-colors">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="cyber-button w-full text-lg">
+                    <span id="buttonText">Access System</span>
+                    <div id="loadingSpinner" class="loading-spinner hidden mx-auto mt-2"></div>
+                </button>
+            </form>
+
+            <!-- Register Link -->
+            <div class="mt-8 text-center">
+                <p class="text-white/60">
+                    Don't have an account? 
+                    <a href="register.html" class="text-cyan-400 hover:text-cyan-300 transition-colors font-semibold">Create Account</a>
+                </p>
+            </div>
+
+            <!-- Back to Home -->
+            <div class="mt-6 text-center">
+                <a href="index.html" class="text-white/60 hover:text-white transition-colors text-sm">
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="holographic-container p-8 text-center max-w-sm">
+            <svg class="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="success-checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="success-checkmark__check" fill="none" d="m14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            <h3 class="orbitron text-2xl font-bold text-white mt-4 mb-2">Access Granted</h3>
+            <p class="text-white/60 mb-6">Welcome to the future of skill exchange!</p>
+            <button onclick="closeSuccessModal()" class="cyber-button">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // Particle System
+        const particlesContainer = document.getElementById('particles');
+        const particles = [];
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 2 + 1;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = Math.random() > 0.5 ? '#00d4ff' : '#ff6b6b';
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+            }
+            
+            draw() {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = this.x + 'px';
+                particle.style.top = this.y + 'px';
+                particle.style.width = this.size + 'px';
+                particle.style.height = this.size + 'px';
+                particle.style.background = this.color;
+                particle.style.opacity = this.opacity;
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                particle.style.boxShadow = `0 0 ${this.size * 2}px ${this.color}`;
+                
+                particlesContainer.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 200);
+            }
+        }
+        
+        // Create particles
+        for (let i = 0; i < 30; i++) {
+            particles.push(new Particle());
+        }
+        
+        function animateParticles() {
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+
+        // Form Handling
+        const loginForm = document.getElementById('loginForm');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const successModal = document.getElementById('successModal');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Show loading state
+            buttonText.textContent = 'Authenticating...';
+            loadingSpinner.classList.remove('hidden');
+            
+            // Simulate authentication
+            setTimeout(() => {
+                if (username && password) {
+                    // Create user object
+                    const user = {
+                        username: username,
+                        email: username + '@example.com',
+                        firstName: username.charAt(0).toUpperCase() + username.slice(1),
+                        lastName: 'User',
+                        avatar: username.charAt(0).toUpperCase(),
+                        skillsOffered: ['Programming', 'Design'],
+                        skillsWanted: ['Marketing', 'Writing'],
+                        bio: 'Passionate about learning and sharing skills!',
+                        location: 'New York, USA',
+                        availability: 'available',
+                        isLoggedIn: true
+                    };
+                    
+                    // Save user to localStorage
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    
+                    showSuccessModal();
+                } else {
+                    alert('Please enter valid credentials');
+                    resetForm();
+                }
+            }, 2000);
+        });
+
+        function resetForm() {
+            buttonText.textContent = 'Access System';
+            loadingSpinner.classList.add('hidden');
+            loginForm.reset();
+        }
+
+        function showSuccessModal() {
+            successModal.classList.remove('hidden');
+            resetForm();
+        }
+
+        function closeSuccessModal() {
+            successModal.classList.add('hidden');
+            window.location.href = 'index.html';
+        }
+
+        // Interactive Effects
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.width = '30px';
+            cursor.style.height = '30px';
+            cursor.style.background = 'radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%)';
+            cursor.style.borderRadius = '50%';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '9999';
+            
+            document.body.appendChild(cursor);
+            
+            setTimeout(() => {
+                cursor.remove();
+            }, 1000);
+        });
+
+        // Input focus effects
+        document.querySelectorAll('.cyber-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Glitch effect on title
+        const title = document.querySelector('.orbitron');
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                title.classList.add('glitch');
+                setTimeout(() => {
+                    title.classList.remove('glitch');
+                }, 200);
+            }
+        }, 1000);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html> 
