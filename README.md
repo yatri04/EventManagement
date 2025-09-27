@@ -40,9 +40,9 @@ Database: MongoDB with Mongoose
 
 Email Service (Optional): Nodemailer
 
-📷 Screenshots
 
-(Add actual screenshots from your project inside a /screenshots folder in the repo)
+
+
 
 🏠 Home Page (List of Events)
 
