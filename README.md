@@ -52,7 +52,7 @@ Email Service (Optional): Nodemailer
 
 👩‍💼 Admin Panel (View Participants)
 
-🎥 Demo Video
+
 
 A demo video (max 5 minutes) will be shared via Google Drive/Dropbox.
 
